@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TeamBuilder</string>
+    <string name="hello_world">Hello TeamBuilder App!</string>
 </resources>
