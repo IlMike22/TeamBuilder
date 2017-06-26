@@ -26,5 +26,7 @@ public class MainActivity extends AppCompatActivity {
         // todo now setting up list adapter. has to be defined first..
 
 
+
+
     }
 }
