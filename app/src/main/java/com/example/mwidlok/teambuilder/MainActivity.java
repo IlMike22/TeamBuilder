@@ -9,11 +9,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.example.mwidlok.teambuilder.Adapters.RvEventsAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private List<String> dataSet = new ArrayList<String>();
+
 
     private FloatingActionButton fab;
 
@@ -32,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        dataSet.add("Eintrag 1");
+        dataSet.add("Eintrag 2");
+        dataSet.add("Eintrag 3");
+
         mRecyclerView = (RecyclerView) findViewById(R.id.rvEventsView);
         mRecyclerView.setHasFixedSize(true);
 
@@ -39,10 +50,11 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        mAdapter = new RvEventsAdapter(dataSet);
+
+        mRecyclerView.setAdapter(mAdapter);
+
         // todo now setting up list adapter. has to be defined first..
-
-
-
 
     }
 }
