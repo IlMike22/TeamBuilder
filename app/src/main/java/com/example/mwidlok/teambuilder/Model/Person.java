@@ -18,6 +18,16 @@ public class Person {
     private String firstName;
     private SkillLevel skillLevel;
 
+    // parameter constructor
+
+    public Person(String firstname, String lastname, int age, SkillLevel skilllevel)
+    {
+        this.firstName = firstname;
+        this. lastName = lastname;
+        this.age = age;
+        this.skillLevel = skilllevel;
+    }
+
     public String getFirstName() {
         return firstName;
     }
