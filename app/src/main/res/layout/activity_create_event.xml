@@ -7,8 +7,20 @@
     tools:context="com.example.mwidlok.teambuilder.CreateEventActivity">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello Create Event Activity!"/>
+        android:layout_width="300dp"
+        android:layout_height="22dp"
+        android:text="Hier bitte den Namen des neuen Events angeben."
+        tools:layout_editor_absoluteY="8dp"
+        tools:layout_editor_absoluteX="8dp" />
+
+    <EditText
+        android:id="@+id/txtEventName"
+        android:layout_width="354dp"
+        android:layout_height="35dp"
+        android:background="#ffffff"
+        tools:layout_editor_absoluteY="48dp"
+        tools:layout_editor_absoluteX="8dp"
+        android:text="hier ist das textfeld"/>
+
 
 </android.support.constraint.ConstraintLayout>

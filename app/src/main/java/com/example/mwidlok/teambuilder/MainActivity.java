@@ -54,7 +54,5 @@ public class MainActivity extends AppCompatActivity {
 
         mRecyclerView.setAdapter(mAdapter);
 
-        // todo now setting up list adapter. has to be defined first..
-
     }
 }

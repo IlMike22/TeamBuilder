@@ -4,8 +4,6 @@ package com.example.mwidlok.teambuilder.Model;
  * Created by Mike on 25.06.2017.
  */
 
-
-
 public class Person {
 
     enum SkillLevel
