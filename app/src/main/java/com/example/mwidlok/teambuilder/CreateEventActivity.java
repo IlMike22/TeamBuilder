@@ -1,5 +1,6 @@
 package com.example.mwidlok.teambuilder;
 
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -20,10 +21,8 @@ public class CreateEventActivity extends AppCompatActivity {
         btnSaveEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast t = new Toast(getApplicationContext());
-                t.setText("Button create event clicked.");
-                t.show();
-
+                Toast toast = Toast.makeText(getApplicationContext(), "Button create event clicked", Toast.LENGTH_SHORT);
+                toast.show();
             }
         });
     }
