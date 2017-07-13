@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.mwidlok.teambuilder.Adapters.RvEventsAdapter;
 
@@ -20,9 +21,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<String> dataSet = new ArrayList<String>();
-
-
     private FloatingActionButton fab;
+    static final int REQUEST_CODE_EVENT_NAME_SET = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), CreateEventActivity.class);
-                startActivityForResult(intent, 999);
+                startActivityForResult(intent, REQUEST_CODE_EVENT_NAME_SET);
             }
         });
 
@@ -54,5 +54,16 @@ public class MainActivity extends AppCompatActivity {
 
         mRecyclerView.setAdapter(mAdapter);
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_EVENT_NAME_SET)
+        {
+            Toast t = Toast.makeText(getApplicationContext(),"We are now in MainActivity and in Request Code 1",Toast.LENGTH_SHORT);
+            t.show();
+           // data.getData();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

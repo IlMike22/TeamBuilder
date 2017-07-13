@@ -36,7 +36,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 {
                     // now take user input and go back to main site with current adapter and list.
                     Log.i("myMessage","event was set. now close activity");
-                    finishActivity(999);
+                    finish();
                 }
             }
         });
