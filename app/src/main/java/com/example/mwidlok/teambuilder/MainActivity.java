@@ -34,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), CreateEventActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_EVENT_NAME_SET);
+                Intent createEventIntent = new Intent(v.getContext(), CreateEventActivity.class);
+                startActivityForResult(createEventIntent, REQUEST_CODE_EVENT_NAME_SET);
             }
         });
 
@@ -60,9 +60,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_EVENT_NAME_SET)
         {
-            Toast t = Toast.makeText(getApplicationContext(),"We are now in MainActivity and in Request Code 1",Toast.LENGTH_SHORT);
+            String result = data.getStringExtra("result");
+            Toast t = Toast.makeText(getApplicationContext(),"We are now in MainActivity and in Request Code 1. String is " + result,Toast.LENGTH_SHORT);
             t.show();
-           // data.getData();
+
+            dataSet.add(result);
+            mAdapter.notifyDataSetChanged();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
