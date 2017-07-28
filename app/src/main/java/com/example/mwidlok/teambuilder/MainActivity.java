@@ -49,9 +49,7 @@ public class MainActivity extends AppCompatActivity {
         // setting Layout Manager for Recycler View
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
         mAdapter = new RvEventsAdapter(dataSet);
-
         mRecyclerView.setAdapter(mAdapter);
 
     }
@@ -61,8 +59,6 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_EVENT_NAME_SET)
         {
             String result = data.getStringExtra("result");
-            Toast t = Toast.makeText(getApplicationContext(),"We are now in MainActivity and in Request Code 1. String is " + result,Toast.LENGTH_SHORT);
-            t.show();
 
             dataSet.add(result);
             mAdapter.notifyDataSetChanged();
