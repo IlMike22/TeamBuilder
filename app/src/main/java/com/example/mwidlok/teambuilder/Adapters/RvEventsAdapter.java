@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.mwidlok.teambuilder.CreatePersonActivity;
 import com.example.mwidlok.teambuilder.R;
+import com.example.mwidlok.teambuilder.TeamListActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +80,7 @@ public class RvEventsAdapter extends RecyclerView.Adapter<RvEventsAdapter.ViewHo
 
     private void showEventDetailActivity(Context context)
     {
-        Intent i = new Intent(context, CreatePersonActivity.class);
+        Intent i = new Intent(context, TeamListActivity.class);
         context.startActivity(i);
     }
 }

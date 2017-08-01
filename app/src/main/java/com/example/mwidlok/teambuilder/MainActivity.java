@@ -58,10 +58,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_EVENT_NAME_SET)
         {
-            String result = data.getStringExtra("result");
-
-            dataSet.add(result);
-            mAdapter.notifyDataSetChanged();
+            String result;
+            if (data != null)
+            {
+                result = data.getStringExtra("result");
+                dataSet.add(result);
+                mAdapter.notifyDataSetChanged();
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
