@@ -15,6 +15,9 @@ import com.example.mwidlok.teambuilder.Adapters.RvEventsAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
@@ -52,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new RvEventsAdapter(dataSet);
         mRecyclerView.setAdapter(mAdapter);
 
+        // Creating Realm database..
+
+        Realm myRealm = Realm.getInstance(new RealmConfiguration.Builder(getApplicationContext()).name("myRealmDatabase").build());
     }
 
     @Override
