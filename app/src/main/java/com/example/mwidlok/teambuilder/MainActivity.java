@@ -55,9 +55,6 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new RvEventsAdapter(dataSet);
         mRecyclerView.setAdapter(mAdapter);
 
-        // Creating Realm database..
-
-        Realm myRealm = Realm.getInstance(new RealmConfiguration.Builder(getApplicationContext()).name("myRealmDatabase").build());
     }
 
     @Override

@@ -11,7 +11,6 @@ public class Person extends RealmObject {
 
     @PrimaryKey
     private int id;
-
     private String lastName;
     private int age;
     private String firstName;
