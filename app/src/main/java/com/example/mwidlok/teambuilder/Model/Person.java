@@ -24,6 +24,7 @@ public class Person extends RealmObject {
 
     public Person(int id, String firstname, String lastname, int age, int skillLevel)
     {
+        this.id = id;
         this.firstName = firstname;
         this. lastName = lastname;
         this.age = age;
