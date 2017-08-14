@@ -60,21 +60,19 @@ public class CreatePersonActivity extends AppCompatActivity {
                 myRealm.beginTransaction();
                 myRealm.copyToRealm(person);
                 myRealm.commitTransaction();
-                Toast t;
+
 
                 if (results.size() > 0)
                 {
                     for (Person p : results)
                     {
-                        t = Toast.makeText(getApplicationContext(), "Found a result named " + p.getFirstName() + " " + p.getLastName(),Toast.LENGTH_SHORT);
-                        t.show();
+                        Log.i("TeamBuilder","Found a result named " + p.getFirstName() + " " + p.getLastName());
                     }
                 }
                 else
-                {
-                    t = Toast.makeText(getApplicationContext(), "No data found.", Toast.LENGTH_SHORT);
-                    t.show();
-                }
+                   Log.i("TeamBuilder","No data found.");
+
+                finish();
             }
         });
     }
