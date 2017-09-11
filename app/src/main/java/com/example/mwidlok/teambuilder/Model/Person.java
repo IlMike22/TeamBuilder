@@ -1,11 +1,12 @@
 package com.example.mwidlok.teambuilder.Model;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by Mike on 25.06.2017.
  */
 
 public class Person {
-
     public enum SkillLevel
     {
         Amateur, Average, Profi
@@ -18,12 +19,16 @@ public class Person {
 
     // parameter constructor
 
-    public Person(String firstname, String lastname, int age, SkillLevel skilllevel)
+    public Person()
+    {
+    }
+
+    public Person( String firstname, String lastname, int age, SkillLevel skillLevel)
     {
         this.firstName = firstname;
         this. lastName = lastname;
         this.age = age;
-        this.skillLevel = skilllevel;
+        this.skillLevel = skillLevel;
     }
 
     public String getFirstName() {
@@ -50,6 +55,10 @@ public class Person {
         this.age = age;
     }
 
+
     public SkillLevel getSkillLevel() {return skillLevel; }
-    public void SetSkillLevel(SkillLevel skillLevel) {this.skillLevel = skillLevel; }
+
+    public void setSkillLevel(SkillLevel skillLevel) {
+        this.skillLevel = skillLevel;
+    }
 }

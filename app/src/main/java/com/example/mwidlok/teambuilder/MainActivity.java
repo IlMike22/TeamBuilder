@@ -16,6 +16,9 @@ import com.example.mwidlok.teambuilder.Model.Person;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
