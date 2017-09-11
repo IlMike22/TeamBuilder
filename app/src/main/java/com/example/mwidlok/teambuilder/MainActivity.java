@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.mwidlok.teambuilder.Adapters.RvEventsAdapter;
+import com.example.mwidlok.teambuilder.Model.Person;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,27 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new RvEventsAdapter(dataSet);
         mRecyclerView.setAdapter(mAdapter);
+
+
+        Person p = new Person("P1","P1",21, Person.SkillLevel.Amateur);
+        Person p2 = new Person("P2","P2",12, Person.SkillLevel.Amateur);
+        Person p3 = new Person("P3","P2",12, Person.SkillLevel.Profi);
+        Person p4 = new Person("P4","P2",12, Person.SkillLevel.Average);
+        Person p5 = new Person("P5","P2",12, Person.SkillLevel.Average);
+        Person p6 = new Person("P6","P2",12, Person.SkillLevel.Amateur);
+        Person p7 = new Person("P7","P2",12, Person.SkillLevel.Average);
+
+        ArrayList<Person> allMembers = new ArrayList<Person>();
+        allMembers.add(p);
+        allMembers.add(p2);
+        allMembers.add(p3);
+        allMembers.add(p4);
+        allMembers.add(p5);
+        allMembers.add(p6);
+        allMembers.add(p7);
+
+        BusinessLogic bl = new BusinessLogic();
+        bl.createTeams(allMembers, 3);
 
     }
 

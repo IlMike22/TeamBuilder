@@ -6,7 +6,7 @@ package com.example.mwidlok.teambuilder.Model;
 
 public class Person {
 
-    enum SkillLevel
+    public enum SkillLevel
     {
         Amateur, Average, Profi
     }
@@ -49,4 +49,7 @@ public class Person {
     public void setAge(int age) {
         this.age = age;
     }
+
+    public SkillLevel getSkillLevel() {return skillLevel; }
+    public void SetSkillLevel(SkillLevel skillLevel) {this.skillLevel = skillLevel; }
 }
