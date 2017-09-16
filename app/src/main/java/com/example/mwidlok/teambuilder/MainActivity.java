@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         allMembers.add(p7);
 
         BusinessLogic bl = new BusinessLogic();
-        bl.createTeams(allMembers, 3);
+        bl.createTeams(allMembers);
 
     }
 

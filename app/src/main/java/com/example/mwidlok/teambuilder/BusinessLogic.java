@@ -1,7 +1,6 @@
 package com.example.mwidlok.teambuilder;
 
 import android.util.Log;
-
 import com.example.mwidlok.teambuilder.Model.Person;
 
 import java.lang.reflect.Array;
@@ -17,28 +16,21 @@ public class BusinessLogic {
     private static int FACTOR_AVERAGE = 2;
     private static int FACTOR_AMATEUR = 1;
 
-    public ArrayList<ArrayList<Person>> createTeams(ArrayList<Person> persons, int teamCount)
+    public ArrayList<ArrayList<Person>> createTeams(ArrayList<Person> persons)
     {
-        if (teamCount > persons.size())
-        {
-            Log.e("TeamBuilder","Error. Given TeamCount is greater than the amount of persons we have.");
-            return null;
-        }
 
-        // creates Arrays for each team related to given teamCount..
-        ArrayList<ArrayList<Person>> teams = new ArrayList<ArrayList<Person>>();
-        for (int i = 0; i < teamCount; ++i)
-        {
-            teams.add(new ArrayList<Person>());
-        }
+        // in version 1 we only have two teams. make an update later with custom team amount.
+
+        ArrayList<Person> team1 = new ArrayList<Person>();
+        ArrayList<Person> team2 = new ArrayList<Person>();
 
         // now check all persons in persons array. move them into the proper array
 
         ArrayList<Person> profis = new ArrayList<Person>();
-        ArrayList<Person> average = new ArrayList<Person>();
-        ArrayList<Person> amateur = new ArrayList<Person>();
+        ArrayList<Person> averages = new ArrayList<Person>();
+        ArrayList<Person> amateurs = new ArrayList<Person>();
 
-
+        boolean pushTeam2 = false;
 
         for (Person person : persons)
         {
@@ -50,72 +42,61 @@ public class BusinessLogic {
                         break;
 
                 case Average:
-                    average.add(person);
+                    averages.add(person);
                     Log.i("TeamBuilder","Array Average gets Person " +person.getFirstName());
                     break;
 
                 case Amateur:
-                    amateur.add(person);
+                    amateurs.add(person);
                     Log.i("TeamBuilder","Array Amateur gets Person " +person.getFirstName());
             }
         }
 
-        int counter = 0;
         // Take all profis and seperate them into each existing team array as far as possible.
         for (int i = 0; i < profis.size(); ++i)
         {
-            if (counter == teams.size())
-                counter = 0;
-
-            teams.get(counter).add(profis.get(i));
-            counter++;
+            if (i%2 ==0)
+                team1.add(profis.get(i));
+            else
+                team2.add(profis.get(i));
         }
 
-        // Now take all amateure and separate them into each existing team array as far as possible.
-        counter = 0;
-        for (int i = 0; i < amateur.size(); ++i)
+        // Take all averages and separate them into each existing team array as far as possible
+        for (int i = 0; i < averages.size(); ++i)
         {
-            if (counter == teams.size())
-                counter = 0;
-
-            teams.get(counter).add(amateur.get(i));
-            counter++;
+            if (i%2 == 0)
+                team1.add(averages.get(i));
+            else
+                team2.add(averages.get(i));
         }
 
-        // Now take all averages and separate them into each existing team array as far as possible.
-
-        counter = 0;
-        int teamSizes[] = new int[teams.size()];
-        // getting first team which deserves adding a average to it..
-        // a team which has not the same count of members yet as the others
-        for (int z = 0; z < teams.size(); ++z)
+        // take all the amateurs and fill both team arrays with them as far as possible
+        for (int i = 0; i < amateurs.size(); ++i)
         {
-            teamSizes[z] = teams.get(z).size();
-            Log.i("TeamBuilder","Team " + (z+1) + " has " + teamSizes[z] + " members");
+            if (i % 2 == 0)
+                team1.add(amateurs.get(i));
+            else
+                team2.add(amateurs.get(i));
         }
 
-        for (int i = 0; i < average.size(); ++i)
-        {
-            teams.get(counter).add(average.get(i));
-            counter++;
-        }
+        validateTeams(team1, team2);
 
-        validateTeams(teams);
-
-        int zaehler = 0;
-        for (ArrayList<Person> team : teams)
-        {
-            zaehler++;
-            for (Person p : team)
+            for (Person person : team1)
             {
-                Log.i("TeamBuilder","We have a person called " + p.getFirstName() + "in team " + zaehler + " with a " + p.getSkillLevel());
+                Log.i("TeamBuilder","We have a person called " + person.getFirstName() + "in team1" + " with a " + person.getSkillLevel());
             }
-        }
+
+            for (Person person : team2)
+            {
+                Log.i("TeamBuilder","We have a person called " + person.getFirstName() + "in team2" + " with a " + person.getSkillLevel());
+            }
+
+        ArrayList<ArrayList<Person>> teams = new ArrayList<ArrayList<Person>>();
+        teams.add(team1);
+        teams.add(team2);
 
         return teams;
     }
-
-
 
     private int getTeamStrength(ArrayList<Person> team)
     {
@@ -131,27 +112,35 @@ public class BusinessLogic {
         return strength;
     }
 
-    private boolean isAmateurInTeam(ArrayList<Person> team)
+    private Person getFirstAverageFromTeam(ArrayList<Person> team)
     {
-        boolean isAmateur = false;
-
-        for (Person p : team)
+        Person person = new Person();
+        for(Person p : team)
         {
-            if (p.getSkillLevel() == Person.SkillLevel.Amateur)
-            {
-                isAmateur = true;
-                break;
+            if (p.getSkillLevel() == Person.SkillLevel.Average) {
+                return p;
             }
         }
 
-        return isAmateur;
+        return null;
     }
 
-    private ArrayList<ArrayList<Person>> validateTeams(ArrayList<ArrayList<Person>> teamList)
+    private Person getFirstAmateurFromTeam(ArrayList<Person> team)
     {
-        ArrayList<ArrayList<Person>> list = new ArrayList<ArrayList<Person>>();
-        ArrayList<Person> team1 = teamList.get(0);
-        ArrayList<Person> team2 = teamList.get(1);
+        for (Person person : team)
+        {
+            if (person.getSkillLevel() == Person.SkillLevel.Amateur)
+            {
+                return person;
+            }
+        }
+        return null;
+    }
+
+
+
+    private ArrayList<ArrayList<Person>> validateTeams(ArrayList<Person> team1, ArrayList<Person> team2)
+    {
 
         //every team needs to check for its strength.
         // a profi member has a value of 3
@@ -168,29 +157,40 @@ public class BusinessLogic {
 
         int diff = team1Strength-team2Strength;
 
-        // now try to get an amateur of team 1 and transfer it to team 2
-
-        if (isAmateurInTeam(team1))
+        if (diff > 5)
         {
-            // Team 1 has at least one Amateur. Take him, transfer him into team 2 and remove him from team 1.
-            try
+            Person average = getFirstAverageFromTeam(team1);
+            if (average != null)
             {
-                Person amateur = team1.get(team1.size()-1);
-                team2.add(amateur);
-                team1.remove(amateur);
-            }
-            catch(Exception exc)
-            {
-                Log.e("TeamBuilder","Couldn't get amateur member of team1");
+                // we found and got one average in team 1 who can be transfered to team 2.
+                team1.remove(average);
+                team2.add(average);
+                Log.i("TeamBuilder","Transferring Average from team 1 to team 2");
             }
         }
+        else if (diff > 2)
+        {
+            Person amateur = getFirstAmateurFromTeam(team1);
+            if (amateur != null)
+            {
+                team1.remove(amateur);
+                team2.add(amateur);
+                Log.i("TeamBuilder","Transferring Amateur from team 1 to team 2");
+            }
+        }
+        else
+            Log.i("TeamBuilder","Teams are already equal at least quite.");
 
         // now check once again the strenth of both teams. If the difference is still greater than 2, repeat the procudure.
 
         Log.i("TeamBuilder","Now Team 1 Strength is " + getTeamStrength(team1));
         Log.i("TeamBuilder","Now Team 2 Strength is " + getTeamStrength(team2));
 
-        return list;
+        ArrayList<ArrayList<Person>> teams = new ArrayList<ArrayList<Person>>();
+        teams.add(team1);
+        teams.add(team2);
+
+        return teams;
     }
     private boolean haveAllTeamsSameSize(ArrayList<ArrayList<Person>> teams)
     {
