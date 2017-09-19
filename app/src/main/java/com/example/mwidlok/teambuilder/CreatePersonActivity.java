@@ -1,5 +1,6 @@
 package com.example.mwidlok.teambuilder;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,8 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
+import static com.example.mwidlok.teambuilder.MainActivity.REQUEST_CODE_EVENT_NAME_SET;
+
 public class CreatePersonActivity extends AppCompatActivity {
 
     Button btnSaveMember;
@@ -22,13 +25,13 @@ public class CreatePersonActivity extends AppCompatActivity {
     EditText txtAge;
     EditText txtSkillLevel;
 
+    private final int REQUEST_CODE_NEW_MEMBER_SET = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_person);
 
-        // creating realm database
-        final Realm myRealm = Realm.getInstance(new RealmConfiguration.Builder(getApplicationContext()).name("myRealmDatabase").build());
 
         btnSaveMember = (Button) findViewById(R.id.btnSaveMember);
         txtFirstName = (EditText) findViewById(R.id.txtFirstName);
@@ -41,28 +44,28 @@ public class CreatePersonActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 // now query this request
+                Realm myDb = Realm.getDefaultInstance();
 
-                //RealmResults<Person> results = myRealm.where(Person.class).findAll();
-                Person person = null;
-
-
-                try
-                {
-                    person = new Person(txtFirstName.getText().toString(),
-                            txtName.getText().toString(),Integer.parseInt(txtAge.getText().toString()),
-                            null);
-                }
-                catch(Exception exc)
-                {
-                    Log.e("TeamBuilder","Cannot parse something of the new person dataset.");
-                }
+                //getting amount of persons that are already saved in db. so we can get the current id.
+                long personAmount = myDb.where(Person.class).count();
 
                 // creating realm transaction
+                myDb.beginTransaction();
 
-                //myRealm.beginTransaction();
-                //myRealm.copyToRealm(person);
-                //myRealm.commitTransaction();
+                Person newPerson = new Person();
+                newPerson.setId((int) personAmount);
+                Log.i("TeamBuilder","Realm: New data gets id " + newPerson.getId());
+                newPerson.setFirstName(txtFirstName.getText().toString());
+                newPerson.setLastName(txtName.getText().toString());
+                newPerson.setAge(Integer.parseInt(txtAge.getText().toString()));
+                myDb.copyToRealm(newPerson);
+                myDb.commitTransaction();
+                Log.i("TeamBuilder","Realm: New data successfully saved.");
 
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("newPersonResult", newPerson);
+                setResult(REQUEST_CODE_NEW_MEMBER_SET, returnIntent);
+                finish();
             }
         });
     }

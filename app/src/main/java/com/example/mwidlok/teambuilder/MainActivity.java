@@ -1,5 +1,6 @@
 package com.example.mwidlok.teambuilder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -7,17 +8,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.mwidlok.teambuilder.Adapters.RvEventsAdapter;
 import com.example.mwidlok.teambuilder.Model.Person;
+import com.example.mwidlok.teambuilder.Model.Team;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,10 +36,17 @@ public class MainActivity extends AppCompatActivity {
     static final int REQUEST_CODE_EVENT_NAME_SET = 1;
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         fab = (FloatingActionButton) findViewById(R.id.fabNewEvent);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -43,9 +57,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        dataSet.add("Eintrag 1");
-        dataSet.add("Eintrag 2");
-        dataSet.add("Eintrag 3");
+
+        Realm myDb = getRealmInstance();
+        Log.i("TeamBuilder","Realm: Reading all persons from db..");
+        RealmResults<Person> allPersons= myDb.where(Person.class).findAll();
+        RealmResults<Team> allTeams = myDb.where(Team.class).findAll();
+
+        for (Team currentTeam : allTeams)
+        {
+            Log.i("TeamBuilder","Realm: Found a team dataset named " + currentTeam.getName());
+            dataSet.add(currentTeam.getName());
+        }
+
+        for (Person person : allPersons)
+        {
+            Log.i("TeamBuilder","Realm: Found a Person: " + person.getFirstName() + " " + person.getLastName());
+        }
+        Log.i("TeamBuilder","Realm: Reading persons finished..");
+        myDb.close();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvEventsView);
         mRecyclerView.setHasFixedSize(true);
@@ -55,28 +84,6 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new RvEventsAdapter(dataSet);
         mRecyclerView.setAdapter(mAdapter);
-
-
-        Person p = new Person("P1","P1",21, Person.SkillLevel.Amateur);
-        Person p2 = new Person("P2","P2",12, Person.SkillLevel.Amateur);
-        Person p3 = new Person("P3","P2",12, Person.SkillLevel.Profi);
-        Person p4 = new Person("P4","P2",12, Person.SkillLevel.Average);
-        Person p5 = new Person("P5","P2",12, Person.SkillLevel.Average);
-        Person p6 = new Person("P6","P2",12, Person.SkillLevel.Amateur);
-        Person p7 = new Person("P7","P2",12, Person.SkillLevel.Average);
-
-        ArrayList<Person> allMembers = new ArrayList<Person>();
-        allMembers.add(p);
-        allMembers.add(p2);
-        allMembers.add(p3);
-        allMembers.add(p4);
-        allMembers.add(p5);
-        allMembers.add(p6);
-        allMembers.add(p7);
-
-        BusinessLogic bl = new BusinessLogic();
-        bl.createTeams(allMembers);
-
     }
 
     @Override
@@ -92,5 +99,40 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.deleteDb:
+                Log.i("TeamBuilder","Delete Db Option selected");
+                if (deleteDatabase())
+                    Toast.makeText(getApplicationContext(),"Realm datanbase was successfully deleted.",Toast.LENGTH_SHORT);
+                else
+                    Toast.makeText(getApplicationContext(),"Realm database couldn't be deleted.", Toast.LENGTH_SHORT);
+        }
+
+        return true;
+    }
+
+    private Realm getRealmInstance()
+    {
+        Realm.init(getApplicationContext());
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder()
+                .name("myRealmDatabase.realm")
+                .schemaVersion(1)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+
+        return Realm.getDefaultInstance();
+    }
+
+    private boolean deleteDatabase()
+    {
+        Realm myDb = Realm.getDefaultInstance();
+        myDb.close();
+        Log.i("TeamBuilder","Trying to delete realm db..");
+        return Realm.deleteRealm(myDb.getConfiguration());
     }
 }

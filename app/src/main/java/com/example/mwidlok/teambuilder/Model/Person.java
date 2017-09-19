@@ -1,4 +1,7 @@
 package com.example.mwidlok.teambuilder.Model;
+
+import java.io.Serializable;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -6,29 +9,47 @@ import io.realm.annotations.PrimaryKey;
  * Created by Mike on 25.06.2017.
  */
 
-public class Person {
-    public enum SkillLevel
-    {
-        Amateur, Average, Profi
-    }
+
+public class Person extends RealmObject implements Serializable{
+
+    @PrimaryKey
+    private int id;
 
     private String lastName;
     private int age;
     private String firstName;
-    private SkillLevel skillLevel;
+    private int skillLevel;    // due to realm does not support enums we have to set skill level with integers. 0 = amateur, 1 = average, 2 = profi
 
-    // parameter constructor
+    public String getSkillLevelDescription() {
+        return skillLevelDescription;
+    }
+
+    public void setSkillLevelDescription(String skillLevelDescription) {
+        this.skillLevelDescription = skillLevelDescription;
+    }
+
+    private String skillLevelDescription;
 
     public Person()
     {
     }
 
-    public Person( String firstname, String lastname, int age, SkillLevel skillLevel)
+    public Person( String firstname, String lastname, int age, int skillLevel)
     {
         this.firstName = firstname;
         this. lastName = lastname;
         this.age = age;
         this.skillLevel = skillLevel;
+    }
+
+    public int getId()
+    {
+        return id;
+    }
+
+    public void setId(int id)
+    {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -56,9 +77,9 @@ public class Person {
     }
 
 
-    public SkillLevel getSkillLevel() {return skillLevel; }
+    public int getSkillLevel() {return skillLevel;}
 
-    public void setSkillLevel(SkillLevel skillLevel) {
+    public void setSkillLevel(int skillLevel) {
         this.skillLevel = skillLevel;
     }
 }

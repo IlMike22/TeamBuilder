@@ -10,6 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.mwidlok.teambuilder.Model.Team;
+
+import io.realm.Realm;
+
 import static com.example.mwidlok.teambuilder.MainActivity.REQUEST_CODE_EVENT_NAME_SET;
 
 public class CreateEventActivity extends AppCompatActivity {
@@ -38,7 +42,20 @@ public class CreateEventActivity extends AppCompatActivity {
                 else
                 {
                     // now take user input and go back to main site with current adapter and list.
-                    Log.i("myMessage","event was set. now close activity");
+                    // Save event in db
+                    Realm myDb = Realm.getDefaultInstance();
+                    long teamAmount = myDb.where(Team.class).count();
+
+                    myDb.beginTransaction();
+                    Team newTeam = new Team();
+                    newTeam.setId((int) teamAmount);
+                    newTeam.setName(eventName);
+                    myDb.copyToRealm(newTeam);
+                    myDb.commitTransaction();
+                    myDb.close();
+
+                    Log.i("TeamBuilder","Realm: New team dataset named " + newTeam.getName() + " was saved in db.");
+                    Log.i("TeamBuilder","Now close NewTeamActivity and go back to overview.");
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("result",eventName);
                     setResult(REQUEST_CODE_EVENT_NAME_SET, returnIntent);

@@ -18,7 +18,6 @@ public class BusinessLogic {
 
     public ArrayList<ArrayList<Person>> createTeams(ArrayList<Person> persons)
     {
-
         // in version 1 we only have two teams. make an update later with custom team amount.
 
         ArrayList<Person> team1 = new ArrayList<Person>();
@@ -30,25 +29,28 @@ public class BusinessLogic {
         ArrayList<Person> averages = new ArrayList<Person>();
         ArrayList<Person> amateurs = new ArrayList<Person>();
 
-        boolean pushTeam2 = false;
-
         for (Person person : persons)
         {
             switch (person.getSkillLevel())
             {
-                case Profi:
+                case 2:
                         profis.add(person);
                         Log.i("TeamBuilder","Array Profis gets Person " +person.getFirstName());
                         break;
 
-                case Average:
+                case 1:
                     averages.add(person);
                     Log.i("TeamBuilder","Array Average gets Person " +person.getFirstName());
                     break;
 
-                case Amateur:
+                case 0:
                     amateurs.add(person);
                     Log.i("TeamBuilder","Array Amateur gets Person " +person.getFirstName());
+                    break;
+
+                default:
+                    Log.e("TeamBuilder","Invalid skill level detected.");
+                    break;
             }
         }
 
@@ -102,11 +104,11 @@ public class BusinessLogic {
     {
         int strength = 0;
         for (Person p : team)
-            if(p.getSkillLevel() == Person.SkillLevel.Profi)
+            if(p.getSkillLevel() == 2)
                 strength += FACTOR_PROFI;
-            else if (p.getSkillLevel() == Person.SkillLevel.Average)
+            else if (p.getSkillLevel() == 1)
                 strength += FACTOR_AVERAGE;
-            else if (p.getSkillLevel() == Person.SkillLevel.Amateur)
+            else if (p.getSkillLevel() == 0)
                 strength += FACTOR_AMATEUR;
 
         return strength;
@@ -117,7 +119,7 @@ public class BusinessLogic {
         Person person = new Person();
         for(Person p : team)
         {
-            if (p.getSkillLevel() == Person.SkillLevel.Average) {
+            if (p.getSkillLevel() == 1) {
                 return p;
             }
         }
@@ -129,15 +131,13 @@ public class BusinessLogic {
     {
         for (Person person : team)
         {
-            if (person.getSkillLevel() == Person.SkillLevel.Amateur)
+            if (person.getSkillLevel() == 0)
             {
                 return person;
             }
         }
         return null;
     }
-
-
 
     private ArrayList<ArrayList<Person>> validateTeams(ArrayList<Person> team1, ArrayList<Person> team2)
     {
