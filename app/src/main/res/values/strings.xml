@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">TeamBuilder</string>
     <string name="hello_world">Hello TeamBuilder App!</string>
+    <string-array name="spSkillLevel">
+        <item>Amateur</item>
+        <item>Average</item>
+        <item>Profi</item>
+    </string-array>
 </resources>
