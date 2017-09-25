@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         Realm myDb = getRealmInstance();
         Log.i("TeamBuilder","Realm: Reading all persons from db..");
-        RealmResults<Person> allPersons= myDb.where(Person.class).findAll();
+
         RealmResults<Team> allTeams = myDb.where(Team.class).findAll();
 
         for (Team currentTeam : allTeams)
@@ -69,11 +69,6 @@ public class MainActivity extends AppCompatActivity {
             dataSet.add(currentTeam.getName());
         }
 
-        for (Person person : allPersons)
-        {
-            Log.i("TeamBuilder","Realm: Found a Person: " + person.getFirstName() + " " + person.getLastName());
-        }
-        Log.i("TeamBuilder","Realm: Reading persons finished..");
         myDb.close();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvEventsView);

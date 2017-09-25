@@ -25,7 +25,6 @@ import java.util.List;
 public class RvEventsAdapter extends RecyclerView.Adapter<RvEventsAdapter.ViewHolder>
 {
     private List<String> mDataSet = new ArrayList<>();
-    CardView cardViewItem;
 
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
