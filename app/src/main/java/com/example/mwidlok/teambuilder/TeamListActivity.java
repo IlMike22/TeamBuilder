@@ -23,7 +23,7 @@ public class TeamListActivity extends AppCompatActivity {
 
     private FloatingActionButton fabNewTeamMember;
     public final int REQUESTCODE_NEWTEAMMEMBER = 1;
-    public ArrayList<RealmResults<Person>> dataSet = new ArrayList<>();
+    public ArrayList<Person> dataSet = new ArrayList<>();
     private RecyclerView.LayoutManager mLayoutManager;
     RecyclerView rvTeamView;
     RvTeamListAdapter teamListAdapter;

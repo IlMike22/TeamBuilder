@@ -22,7 +22,7 @@ import io.realm.RealmResults;
 
 public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.ViewHolder> {
 
-    private List<RealmResults<Person>> mDataSet = new ArrayList<>();
+    private List<Person> mDataSet = new ArrayList<>();
 
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -34,7 +34,7 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
         }
     }
 
-    public RvTeamListAdapter(List<RealmResults<Person>> myDataSet)
+    public RvTeamListAdapter(List<Person> myDataSet)
     {
         mDataSet = myDataSet;
     }
@@ -53,10 +53,10 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
         TextView tvName = (TextView) llEventList.findViewById(R.id.tvMemberName);
         TextView tvAge = (TextView) llEventList.findViewById(R.id.tvAge);
         TextView tvSkillLevel = (TextView) llEventList.findViewById(R.id.tvSkillLevel);
-        String firstName = mDataSet.get(position).first().getFirstName().toString();
-        String lastName = mDataSet.get(position).first().getFirstName().toString();
-        int age = mDataSet.get(position).first().getAge();
-        int skillLevel = mDataSet.get(position).first().getSkillLevel();
+        String firstName = mDataSet.get(position).getFirstName().toString();
+        String lastName = mDataSet.get(position).getFirstName().toString();
+        int age = mDataSet.get(position).getAge();
+        int skillLevel = mDataSet.get(position).getSkillLevel();
         tvName.setText(firstName + " " + lastName);
         tvAge.setText("Alter: " + String.valueOf(age));
         tvSkillLevel.setText("Skill Level: " + String.valueOf(skillLevel));
