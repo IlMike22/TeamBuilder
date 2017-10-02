@@ -63,9 +63,6 @@ public class RvEventsAdapter extends RecyclerView.Adapter<RvEventsAdapter.ViewHo
             @Override
             public void onClick(View v)
             {
-                Toast t = Toast.makeText(v.getContext(), "item " + position + " clicked", Toast.LENGTH_SHORT);
-                t.show();
-
                 // now open new Activity
                 showEventDetailActivity(v.getContext());
             }

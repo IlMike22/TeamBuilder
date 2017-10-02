@@ -6,13 +6,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.mwidlok.teambuilder.Model.Person;
 import com.example.mwidlok.teambuilder.R;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import io.realm.RealmResults;
 
 /**
  * Created by Mike on 19.09.2017.
@@ -20,7 +22,7 @@ import java.util.List;
 
 public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.ViewHolder> {
 
-    private List<String> mDataSet = new ArrayList<String>();
+    private List<RealmResults<Person>> mDataSet = new ArrayList<>();
 
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -32,7 +34,7 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
         }
     }
 
-    public RvTeamListAdapter(List<String> myDataSet)
+    public RvTeamListAdapter(List<RealmResults<Person>> myDataSet)
     {
         mDataSet = myDataSet;
     }
@@ -48,8 +50,16 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         LinearLayout llEventList = holder.llMemberCardView;
-        TextView tvEventItem = (TextView) llEventList.findViewById(R.id.tvMemberName);
-        tvEventItem.setText(mDataSet.get(position));
+        TextView tvName = (TextView) llEventList.findViewById(R.id.tvMemberName);
+        TextView tvAge = (TextView) llEventList.findViewById(R.id.tvAge);
+        TextView tvSkillLevel = (TextView) llEventList.findViewById(R.id.tvSkillLevel);
+        String firstName = mDataSet.get(position).first().getFirstName().toString();
+        String lastName = mDataSet.get(position).first().getFirstName().toString();
+        int age = mDataSet.get(position).first().getAge();
+        int skillLevel = mDataSet.get(position).first().getSkillLevel();
+        tvName.setText(firstName + " " + lastName);
+        tvAge.setText("Alter: " + String.valueOf(age));
+        tvSkillLevel.setText("Skill Level: " + String.valueOf(skillLevel));
 
         holder.itemView.setOnClickListener(new View.OnClickListener()
         {
@@ -66,7 +76,7 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mDataSet.size();
     }
 
 

@@ -23,9 +23,10 @@ public class TeamListActivity extends AppCompatActivity {
 
     private FloatingActionButton fabNewTeamMember;
     public final int REQUESTCODE_NEWTEAMMEMBER = 1;
-    public ArrayList<String> dataSet = new ArrayList<>();
+    public ArrayList<RealmResults<Person>> dataSet = new ArrayList<>();
     private RecyclerView.LayoutManager mLayoutManager;
     RecyclerView rvTeamView;
+    RvTeamListAdapter teamListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,19 +43,19 @@ public class TeamListActivity extends AppCompatActivity {
         });
 
         Realm myDb = Realm.getDefaultInstance();
-
         RealmResults<Person> allPersons= myDb.where(Person.class).findAll();
 
         for (Person p : allPersons)
         {
-            dataSet.add(p.getFirstName() + " " + p.getLastName());
+            dataSet.add(p);
         }
 
         rvTeamView = (RecyclerView) findViewById(R.id.rvTeam);
         rvTeamView.setHasFixedSize(true);
+
         mLayoutManager = new LinearLayoutManager(this);
         rvTeamView.setLayoutManager(mLayoutManager);
-        RvTeamListAdapter teamListAdapter = new RvTeamListAdapter(dataSet);
+        teamListAdapter = new RvTeamListAdapter(dataSet);
         rvTeamView.setAdapter(teamListAdapter);
 
         myDb.close();
@@ -68,8 +69,9 @@ public class TeamListActivity extends AppCompatActivity {
             {
                 Person newPerson = (Person) data.getSerializableExtra("newPersonResult");
                 Log.i("TeamBuilder","Got new Person from CreateTeamActivity named " + newPerson.getFirstName() + " " + newPerson.getLastName());
-
+                dataSet.add(newPerson);
                 // now update the adapter for list of team members
+                teamListAdapter.notifyDataSetChanged();
             }
         }
 
