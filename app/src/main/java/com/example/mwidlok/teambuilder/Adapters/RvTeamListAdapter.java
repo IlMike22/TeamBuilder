@@ -73,10 +73,6 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
                 //showMemberDetailActivity(v.getContext());
             }
         });
-
-        //close realm
-        Realm currentRealmInstance = Realm.getDefaultInstance();
-        currentRealmInstance.close();
     }
 
     @Override

@@ -75,4 +75,14 @@ public class TeamListActivity extends AppCompatActivity {
 
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    @Override
+    protected void onDestroy() {
+
+        //close realm
+        Realm currentRealmInstance = Realm.getDefaultInstance();
+        currentRealmInstance.close();
+
+        super.onDestroy();
+    }
 }
