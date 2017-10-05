@@ -57,8 +57,6 @@ public class TeamListActivity extends AppCompatActivity {
         rvTeamView.setLayoutManager(mLayoutManager);
         teamListAdapter = new RvTeamListAdapter(dataSet);
         rvTeamView.setAdapter(teamListAdapter);
-
-        myDb.close();
     }
 
     @Override

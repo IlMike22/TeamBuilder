@@ -14,13 +14,14 @@ import com.example.mwidlok.teambuilder.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
 import io.realm.RealmResults;
 
 /**
  * Created by Mike on 19.09.2017.
  */
 
-public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.ViewHolder> {
+public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.ViewHolder>  {
 
     private List<Person> mDataSet = new ArrayList<>();
 
@@ -54,7 +55,7 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
         TextView tvAge = (TextView) llEventList.findViewById(R.id.tvAge);
         TextView tvSkillLevel = (TextView) llEventList.findViewById(R.id.tvSkillLevel);
         String firstName = mDataSet.get(position).getFirstName().toString();
-        String lastName = mDataSet.get(position).getFirstName().toString();
+        String lastName = mDataSet.get(position).getLastName().toString();
         int age = mDataSet.get(position).getAge();
         int skillLevel = mDataSet.get(position).getSkillLevel();
         tvName.setText(firstName + " " + lastName);
@@ -72,6 +73,10 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
                 //showMemberDetailActivity(v.getContext());
             }
         });
+
+        //close realm
+        Realm currentRealmInstance = Realm.getDefaultInstance();
+        currentRealmInstance.close();
     }
 
     @Override
