@@ -12,11 +12,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mwidlok.teambuilder.CreatePersonActivity;
+import com.example.mwidlok.teambuilder.Model.Team;
 import com.example.mwidlok.teambuilder.R;
 import com.example.mwidlok.teambuilder.TeamListActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 /**
  * Created by MWidlok on 26.06.2017.
@@ -64,7 +69,7 @@ public class RvEventsAdapter extends RecyclerView.Adapter<RvEventsAdapter.ViewHo
             public void onClick(View v)
             {
                 // now open new Activity
-                showEventDetailActivity(v.getContext());
+                showEventDetailActivity(v.getContext(), position);
             }
         });
     }
@@ -74,8 +79,11 @@ public class RvEventsAdapter extends RecyclerView.Adapter<RvEventsAdapter.ViewHo
         return mDataSet.size();
     }
 
-    private void showEventDetailActivity(Context context)
+    private void showEventDetailActivity(Context context, int position)
     {
+        Realm myRealm = Realm.getDefaultInstance();
+        RealmQuery<Team> currentTeam = myRealm.where(Team.class).like("name",mDataSet.get(position));
+        // to be continued.
         Intent i = new Intent(context, TeamListActivity.class);
         context.startActivity(i);
     }
