@@ -7,5 +7,10 @@
         android:title="Delete Db"
         app:showAsAction="never" >
     </item>
+    <item android:id="@+id/showDbBrowser"
+        android:orderInCategory="100"
+        android:title="Show Realm Browser"
+        app:showAsAction="never">
+    </item>
 
 </menu>

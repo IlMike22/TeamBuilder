@@ -18,12 +18,14 @@ import android.widget.Toast;
 import com.example.mwidlok.teambuilder.Adapters.RvEventsAdapter;
 import com.example.mwidlok.teambuilder.Model.Person;
 import com.example.mwidlok.teambuilder.Model.Team;
+import com.scand.realmbrowser.RealmBrowser;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
             dataSet.add(currentTeam.getName());
         }
 
+        //notwendig?
         myDb.close();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvEventsView);
@@ -106,6 +109,15 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"Realm datanbase was successfully deleted.",Toast.LENGTH_SHORT);
                 else
                     Toast.makeText(getApplicationContext(),"Realm database couldn't be deleted.", Toast.LENGTH_SHORT);
+            case R.id.showDbBrowser:
+                List<Class<? extends RealmObject>> classes = new ArrayList<>();
+                classes.add(Person.class);
+                classes.add(Team.class);
+
+                Log.i("TeamBuilder","No showing Realm Browser");
+                new RealmBrowser.Builder(this)
+                        .add(getRealmInstance(), classes)
+                        .show();
         }
 
         return true;
