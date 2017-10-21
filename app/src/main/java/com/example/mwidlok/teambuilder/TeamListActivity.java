@@ -42,7 +42,7 @@ public class TeamListActivity extends AppCompatActivity {
             }
         });
 
-        Realm myDb = Realm.getDefaultInstance();
+        Realm myDb = RealmHelper.getRealmInstance();
         RealmResults<Person> allPersons= myDb.where(Person.class).findAll();
 
         for (Person p : allPersons)
@@ -80,9 +80,7 @@ public class TeamListActivity extends AppCompatActivity {
     protected void onDestroy() {
 
         //close realm
-        Realm currentRealmInstance = Realm.getDefaultInstance();
-        currentRealmInstance.close();
-
+        RealmHelper.getRealmInstance().close();
         super.onDestroy();
     }
 }

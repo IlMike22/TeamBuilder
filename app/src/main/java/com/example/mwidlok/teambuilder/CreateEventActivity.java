@@ -1,9 +1,8 @@
 package com.example.mwidlok.teambuilder;
 
 import android.content.Intent;
-import android.support.design.widget.BaseTransientBottomBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -43,9 +42,9 @@ public class CreateEventActivity extends AppCompatActivity {
                 {
                     // now take user input and go back to main site with current adapter and list.
                     // Save event in db
-                    Realm myDb = Realm.getDefaultInstance();
-                    long teamAmount = myDb.where(Team.class).count();
+                    Realm myDb = RealmHelper.getRealmInstance();
 
+                    long teamAmount = myDb.where(Team.class).count();
                     myDb.beginTransaction();
                     Team newTeam = new Team();
                     newTeam.setId((int) teamAmount);

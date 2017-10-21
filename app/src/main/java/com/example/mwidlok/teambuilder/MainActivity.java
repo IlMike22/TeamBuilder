@@ -132,14 +132,15 @@ public class MainActivity extends AppCompatActivity {
                 .deleteRealmIfMigrationNeeded()
                 .build();
 
-        return Realm.getDefaultInstance();
+        return Realm.getInstance(realmConfig);
     }
 
     private boolean deleteDatabase()
     {
-        Realm myDb = Realm.getDefaultInstance();
-        myDb.close();
+        Realm myDb = RealmHelper.getRealmInstance();
         Log.i("TeamBuilder","Trying to delete realm db..");
+        myDb.close();
+
         return Realm.deleteRealm(myDb.getConfiguration());
     }
 }

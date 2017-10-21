@@ -65,9 +65,10 @@ public class CreatePersonActivity extends AppCompatActivity{
                 Person newPerson = validateAndCreatePerson();
 
                 // now query this request
-                Realm myDb = Realm.getDefaultInstance();
+                Realm myDb = RealmHelper.getRealmInstance();
 
                 //getting amount of persons that are already saved in db. so we can get the current id.
+                //todo: we first have to get all persons and than have to find out which person belongs to current team
                 long personAmount = myDb.where(Person.class).count();
 
                 // creating realm transaction
