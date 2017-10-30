@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.mwidlok.teambuilder.Adapters.RvTeamListAdapter;
 import com.example.mwidlok.teambuilder.Model.Person;
+import com.example.mwidlok.teambuilder.Model.Team;
 import com.example.mwidlok.teambuilder.R;
 
 import java.util.ArrayList;
@@ -34,16 +35,26 @@ public class TeamListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_list);
         fabNewTeamMember = (FloatingActionButton) findViewById(R.id.fabnewTeamMember);
 
+        final int teamId = getIntent().getIntExtra("teamId",-1);
+
+        if (teamId < 0)
+        {
+            Log.e("Error","Team Id not found.");
+            return;
+        }
+
+
         fabNewTeamMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), CreatePersonActivity.class);
+                intent.putExtra("teamId",teamId);
                 startActivityForResult(intent, REQUESTCODE_NEWTEAMMEMBER);
             }
         });
 
         Realm myDb = RealmHelper.getRealmInstance();
-        RealmResults<Person> allPersons= myDb.where(Person.class).findAll();
+        RealmResults<Person> allPersons= myDb.where(Person.class).equalTo("team.id",teamId).findAll();
 
         for (Person p : allPersons)
         {

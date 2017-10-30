@@ -13,9 +13,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.mwidlok.teambuilder.Model.Person;
+import com.example.mwidlok.teambuilder.Model.Team;
+
+import java.util.ArrayList;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 import static com.example.mwidlok.teambuilder.MainActivity.REQUEST_CODE_EVENT_NAME_SET;
@@ -40,6 +44,13 @@ public class CreatePersonActivity extends AppCompatActivity{
         txtName = (EditText) findViewById(R.id.txtName);
         txtAge = (EditText) findViewById(R.id.txtAge);
         spSkillLevel = (Spinner) findViewById(R.id.spSkillLevel);
+
+        final int teamId = getIntent().getIntExtra("teamId",-1);
+        if (teamId < 0) {
+            Log.e("TeamBuilder", "Error. Current team Id not found. Couldn't read out current team.");
+            return;
+        }
+
         spSkillLevel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -56,20 +67,28 @@ public class CreatePersonActivity extends AppCompatActivity{
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         spSkillLevel.setAdapter(arrayAdapter);
 
-
-
         btnSaveMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Person newPerson = validateAndCreatePerson();
+                Person newPerson = validateAndCreatePerson(teamId);
 
                 // now query this request
                 Realm myDb = RealmHelper.getRealmInstance();
 
                 //getting amount of persons that are already saved in db. so we can get the current id.
-                //todo: we first have to get all persons and than have to find out which person belongs to current team
+                //getting also the amount of current team members. Therefore we catch all persons with current team id.
+                int counter = 0;
+                ArrayList<Person> personList = new ArrayList<Person>(myDb.where(Person.class).findAll());
+                for (Person p : personList)
+                {
+                    if (p.getTeam().getId() == teamId)
+                        counter++;
+                }
+
                 long personAmount = myDb.where(Person.class).count();
+                Log.i("TeamBuilder information","There are " + personAmount + " persons in db at the moment.");
+                Log.i("TeamBuilder information", counter + " persons belong to current team with id " + teamId);
 
                 // creating realm transaction
                 myDb.beginTransaction();
@@ -88,7 +107,7 @@ public class CreatePersonActivity extends AppCompatActivity{
         });
     }
 
-    private Person validateAndCreatePerson()
+    private Person validateAndCreatePerson(int teamId)
     {
         String firstName = txtFirstName.getText().toString();
         String lastName = txtName.getText().toString();
@@ -120,6 +139,12 @@ public class CreatePersonActivity extends AppCompatActivity{
         newPerson.setFirstName(firstName);
         newPerson.setLastName(lastName);
         newPerson.setAge(age);
+
+        //todo we have to set team before saving this person
+        Realm myDb = RealmHelper.getRealmInstance();
+
+        Team currentTeam = myDb.where(Team.class).equalTo("id", teamId).findFirst();
+        newPerson.setTeam(currentTeam);
 
         return newPerson;
     }

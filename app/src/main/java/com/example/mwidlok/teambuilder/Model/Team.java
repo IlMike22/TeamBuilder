@@ -1,5 +1,7 @@
 package com.example.mwidlok.teambuilder.Model;
 
+import java.io.Serializable;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -7,7 +9,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by Mike on 18.09.2017.
  */
 
-public class Team extends RealmObject {
+public class Team extends RealmObject implements Serializable {
 
     @PrimaryKey
     private int id;
