@@ -1,5 +1,7 @@
 package com.example.mwidlok.teambuilder.Model;
 
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
 import io.realm.RealmObject;

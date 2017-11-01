@@ -54,7 +54,7 @@ public class TeamListActivity extends AppCompatActivity {
         });
 
         Realm myDb = RealmHelper.getRealmInstance();
-        RealmResults<Person> allPersons= myDb.where(Person.class).equalTo("team.id",teamId).findAll();
+        RealmResults<Person> allPersons= myDb.where(Person.class).equalTo("teamId",teamId).findAll();
 
         for (Person p : allPersons)
         {

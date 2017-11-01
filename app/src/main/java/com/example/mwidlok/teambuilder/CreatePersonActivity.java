@@ -34,7 +34,6 @@ public class CreatePersonActivity extends AppCompatActivity{
 
     private final int REQUEST_CODE_NEW_MEMBER_SET = 1;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +44,7 @@ public class CreatePersonActivity extends AppCompatActivity{
         txtAge = (EditText) findViewById(R.id.txtAge);
         spSkillLevel = (Spinner) findViewById(R.id.spSkillLevel);
 
-        final int teamId = getIntent().getIntExtra("teamId",-1);
+        final int teamId = getIntent().getIntExtra("teamId", -1);
         if (teamId < 0) {
             Log.e("TeamBuilder", "Error. Current team Id not found. Couldn't read out current team.");
             return;
@@ -82,7 +81,7 @@ public class CreatePersonActivity extends AppCompatActivity{
                 ArrayList<Person> personList = new ArrayList<Person>(myDb.where(Person.class).findAll());
                 for (Person p : personList)
                 {
-                    if (p.getTeam().getId() == teamId)
+                    if (p.getTeamId() == teamId)
                         counter++;
                 }
 
@@ -102,7 +101,16 @@ public class CreatePersonActivity extends AppCompatActivity{
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("newPersonResult", newPerson);
                 setResult(REQUEST_CODE_NEW_MEMBER_SET, returnIntent);
-                finish();
+
+                try
+                {
+                    finish();
+                }
+                catch (Exception exc)
+                {
+                    Log.e("TeamBuilder","Fehler. Details: " + exc.getMessage());
+                }
+
             }
         });
     }
@@ -144,7 +152,7 @@ public class CreatePersonActivity extends AppCompatActivity{
         Realm myDb = RealmHelper.getRealmInstance();
 
         Team currentTeam = myDb.where(Team.class).equalTo("id", teamId).findFirst();
-        newPerson.setTeam(currentTeam);
+        newPerson.setTeamId(currentTeam.getId());
 
         return newPerson;
     }
