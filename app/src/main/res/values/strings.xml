@@ -6,4 +6,5 @@
         <item>Average</item>
         <item>Profi</item>
     </string-array>
+    <string name="btnGenerateTeams">Teams generieren</string>
 </resources>

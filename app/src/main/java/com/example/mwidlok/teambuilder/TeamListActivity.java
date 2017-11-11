@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.mwidlok.teambuilder.Adapters.RvTeamListAdapter;
@@ -28,12 +29,14 @@ public class TeamListActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     RecyclerView rvTeamView;
     RvTeamListAdapter teamListAdapter;
+    Button btnGenerateTeams;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
         fabNewTeamMember = (FloatingActionButton) findViewById(R.id.fabnewTeamMember);
+        btnGenerateTeams = (Button) findViewById(R.id.btnGenerateTeams);
 
         final int teamId = getIntent().getIntExtra("teamId",-1);
 
@@ -43,13 +46,19 @@ public class TeamListActivity extends AppCompatActivity {
             return;
         }
 
-
         fabNewTeamMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), CreatePersonActivity.class);
                 intent.putExtra("teamId",teamId);
                 startActivityForResult(intent, REQUESTCODE_NEWTEAMMEMBER);
+            }
+        });
+
+        btnGenerateTeams.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),"Okay that works. Now open activity Team Result.",Toast.LENGTH_SHORT).show();
             }
         });
 

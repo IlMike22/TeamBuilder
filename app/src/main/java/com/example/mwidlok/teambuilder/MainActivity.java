@@ -106,9 +106,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.deleteDb:
                 Log.i("TeamBuilder","Delete Db Option selected");
                 if (deleteDatabase())
-                    Toast.makeText(getApplicationContext(),"Realm database was successfully deleted.",Toast.LENGTH_SHORT);
+                    Toast.makeText(getApplicationContext(),"Realm database was successfully deleted.",Toast.LENGTH_SHORT).show();
                 else
-                    Toast.makeText(getApplicationContext(),"Realm database couldn't be deleted.", Toast.LENGTH_SHORT);
+                    Toast.makeText(getApplicationContext(),"Realm database couldn't be deleted.", Toast.LENGTH_SHORT).show();
             case R.id.showDbBrowser:
                 List<Class<? extends RealmObject>> classes = new ArrayList<>();
                 classes.add(Person.class);
