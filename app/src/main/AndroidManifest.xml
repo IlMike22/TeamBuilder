@@ -18,7 +18,8 @@
         </activity>
         <activity android:name=".CreatePersonActivity" />
         <activity android:name=".TeamListActivity" />
-        <activity android:name=".CreateEventActivity"></activity>
+        <activity android:name=".CreateEventActivity" />
+        <activity android:name=".TeamResultActivity"></activity>
     </application>
 
 </manifest>

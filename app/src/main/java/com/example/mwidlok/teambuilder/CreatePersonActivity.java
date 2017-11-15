@@ -148,7 +148,6 @@ public class CreatePersonActivity extends AppCompatActivity{
         newPerson.setLastName(lastName);
         newPerson.setAge(age);
 
-        //todo we have to set team before saving this person
         Realm myDb = RealmHelper.getRealmInstance();
 
         Team currentTeam = myDb.where(Team.class).equalTo("id", teamId).findFirst();

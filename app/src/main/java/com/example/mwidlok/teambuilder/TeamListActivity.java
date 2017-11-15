@@ -27,9 +27,12 @@ public class TeamListActivity extends AppCompatActivity {
     public final int REQUESTCODE_NEWTEAMMEMBER = 1;
     public ArrayList<Person> dataSet = new ArrayList<>();
     private RecyclerView.LayoutManager mLayoutManager;
+    private int REQUESTCODE_TEAMRESULT = 22;
     RecyclerView rvTeamView;
     RvTeamListAdapter teamListAdapter;
     Button btnGenerateTeams;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,10 @@ public class TeamListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(),"Okay that works. Now open activity Team Result.",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), TeamResultActivity.class);
+                intent.putExtra("teamMemberList",dataSet);
+                intent.putExtra("currentTeamId", teamId);
+                startActivityForResult(intent, REQUESTCODE_TEAMRESULT);
             }
         });
 
