@@ -63,7 +63,7 @@ public class TeamListActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(),"Okay that works. Now open activity Team Result.",Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), TeamResultActivity.class);
-                intent.putExtra("teamMemberList",dataSet);
+                //intent.putExtra("teamMemberList",dataSet);
                 intent.putExtra("currentTeamId", teamId);
                 startActivityForResult(intent, REQUESTCODE_TEAMRESULT);
             }

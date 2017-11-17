@@ -110,7 +110,6 @@ public class CreatePersonActivity extends AppCompatActivity{
                 {
                     Log.e("TeamBuilder","Fehler. Details: " + exc.getMessage());
                 }
-
             }
         });
     }
