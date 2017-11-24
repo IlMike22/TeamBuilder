@@ -61,9 +61,14 @@ public class TeamListActivity extends AppCompatActivity {
         btnGenerateTeams.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (dataSet.size() == 0)
+                {
+                    Toast.makeText(getApplicationContext(),"No team members available to generate a team with.",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 Toast.makeText(getApplicationContext(),"Okay that works. Now open activity Team Result.",Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), TeamResultActivity.class);
-                //intent.putExtra("teamMemberList",dataSet);
                 intent.putExtra("currentTeamId", teamId);
                 startActivityForResult(intent, REQUESTCODE_TEAMRESULT);
             }

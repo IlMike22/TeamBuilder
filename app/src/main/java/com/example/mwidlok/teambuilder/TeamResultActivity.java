@@ -35,6 +35,5 @@ public class TeamResultActivity extends AppCompatActivity {
 
     private void generateTeams(List<Person> personList, Team currentTeam)
     {
-
     }
 }
