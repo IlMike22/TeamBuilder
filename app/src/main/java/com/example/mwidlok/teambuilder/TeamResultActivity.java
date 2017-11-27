@@ -31,9 +31,16 @@ public class TeamResultActivity extends AppCompatActivity {
             teamMembers.add(p);
             Log.i("TeamBuilder","Here is Person " + p.getFirstName() + " " + p.getLastName());
         }
+
+        generateTeams(teamMembers, teamId);
     }
 
-    private void generateTeams(List<Person> personList, Team currentTeam)
+    private ArrayList<ArrayList<Person>> generateTeams(ArrayList<Person> personList, int teamId)
     {
+        BusinessLogic bl = new BusinessLogic();
+        ArrayList<ArrayList<Person>> result = bl.createTeams(personList);
+        Log.i("TeamBuilder","Teams were successfully generated.");
+        //todo Logik überarbeiten und Validieren
+        return result;
     }
 }
