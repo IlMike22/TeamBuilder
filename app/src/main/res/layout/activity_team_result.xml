@@ -1,14 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<LinearLayout android:id="@+id/llResult1"
+    android:orientation="vertical"
+    android:layout_width="300dp"
     android:layout_height="match_parent"
-    tools:context="com.example.mwidlok.teambuilder.TeamResultActivity">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Hello TeamResultActivity"/>
+        android:text="Ergebnis"/>
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/tvTeam1Headline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Folgende Personen gehören zu Team 1" />
+
+            <TextView
+                android:id="@+id/tvResult1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+
+        <TextView
+            android:id="@+id/tvTeam2Headline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Folgende Personen gehören zu Team 2"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:id="@+id/tvResult2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="12dp"/>
+
+        </LinearLayout>
