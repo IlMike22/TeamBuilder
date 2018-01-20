@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +23,7 @@ public class TeamResultActivity extends AppCompatActivity {
 
     TextView tvResult1;
     TextView tvResult2;
-
+    Button btnComplete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,7 @@ public class TeamResultActivity extends AppCompatActivity {
 
         tvResult1 = (TextView) findViewById(R.id.tvResult1);
         tvResult2 = (TextView) findViewById(R.id.tvResult2);
+        btnComplete = (Button) findViewById(R.id.btnComplete);
 
         ArrayList<Person> teamMembers = new ArrayList<>();
         int teamId = getIntent().getIntExtra("currentTeamId",-1);
@@ -46,15 +49,23 @@ public class TeamResultActivity extends AppCompatActivity {
         }
 
         ArrayList<ArrayList<Person>> result = generateTeams(teamMembers, teamId);
-        String result1Output = "Personen: ";
-        String result2Output = "Personen: ";
+        String result1Output = "Folgende Personen sind in Team 1:\n";
+        String result2Output = "Folgende Personen sind in Team 2:\n";
+
+        btnComplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            }
+        });
 
         try
         {
             for (Person person : result.get(0))
             {
                 result1Output += person.getFirstName() + " " + person.getLastName();
-                if (result.get(0).indexOf(person) != result.get(0).size())
+                if (result.get(0).indexOf(person) != result.get(0).size()-1)
                 {
                     result1Output += ", ";
                 }
@@ -71,9 +82,9 @@ public class TeamResultActivity extends AppCompatActivity {
             for (Person person : result.get(1))
             {
                 result2Output += person.getFirstName() + " " + person.getLastName();
-                if (result.get(1).indexOf(person) != result.get(1).size())
+                if (result.get(1).indexOf(person) != result.get(1).size()-1)
                 {
-                    result1Output += ", ";
+                    result2Output += ", ";
                 }
             }
         }
@@ -82,6 +93,11 @@ public class TeamResultActivity extends AppCompatActivity {
             Log.e("TeamBuilder","An error accured while putting out the info about the team memabers.");
             Log.e("TeamBuilder","Details: " + exc.getMessage());
         }
+
+        if (tvResult1 != null)
+            tvResult1.setText(result1Output);
+        if (tvResult2 != null)
+            tvResult2.setText(result2Output);
     }
 
     private ArrayList<ArrayList<Person>> generateTeams(ArrayList<Person> personList, int teamId)

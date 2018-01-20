@@ -1,5 +1,7 @@
 package com.example.mwidlok.teambuilder.Adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import com.example.mwidlok.teambuilder.CreatePersonActivity;
 import com.example.mwidlok.teambuilder.Model.Person;
 import com.example.mwidlok.teambuilder.R;
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ import io.realm.RealmResults;
 public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.ViewHolder>  {
 
     private List<Person> mDataSet = new ArrayList<>();
+    Context currentContext;
 
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -35,9 +39,10 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
         }
     }
 
-    public RvTeamListAdapter(List<Person> myDataSet)
+    public RvTeamListAdapter(List<Person> myDataSet, Context currentContext)
     {
         mDataSet = myDataSet;
+        this.currentContext = currentContext;
     }
 
     @Override
@@ -54,13 +59,12 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
         TextView tvName = (TextView) llEventList.findViewById(R.id.tvMemberName);
         TextView tvAge = (TextView) llEventList.findViewById(R.id.tvAge);
         TextView tvSkillLevel = (TextView) llEventList.findViewById(R.id.tvSkillLevel);
-        String firstName = mDataSet.get(position).getFirstName().toString();
-        String lastName = mDataSet.get(position).getLastName().toString();
-        int age = mDataSet.get(position).getAge();
-        int skillLevel = mDataSet.get(position).getSkillLevel();
-        tvName.setText(firstName + " " + lastName);
-        tvAge.setText("Alter: " + String.valueOf(age));
-        tvSkillLevel.setText("Skill Level: " + String.valueOf(skillLevel));
+
+        final Person currentPerson = mDataSet.get(position);
+
+        tvName.setText(currentPerson.getFirstName() + " " + currentPerson.getLastName());
+        tvAge.setText("Alter: " + String.valueOf(currentPerson.getAge()));
+        tvSkillLevel.setText("Skill Level: " + String.valueOf(currentPerson.getSkillLevel()));
 
         holder.itemView.setOnClickListener(new View.OnClickListener()
         {
@@ -68,9 +72,11 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
             public void onClick(View v)
             {
                 Log.i("TeamBuilder","User clicked Item " + position + " of Member List.");
-
+                Log.i("TeamBuilder","Clicked user is " + currentPerson.getFirstName() + " " + currentPerson.getLastName());
                 // now open new Activity for creating members and put in all data of selected member dataset
-                //showMemberDetailActivity(v.getContext());
+
+                showMemberDetailActivity(currentContext, currentPerson);
+
             }
         });
     }
@@ -78,6 +84,14 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
     @Override
     public int getItemCount() {
         return mDataSet.size();
+    }
+
+    private void showMemberDetailActivity(Context context, Person currentPerson)
+    {
+        // opens person detail view for showing and editing current clicked person in list.
+        Intent i = new Intent(context, CreatePersonActivity.class);
+        i.putExtra("currentPerson", currentPerson);
+        context.startActivity(i);
     }
 
 
