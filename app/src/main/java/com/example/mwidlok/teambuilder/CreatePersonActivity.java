@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
@@ -38,17 +39,12 @@ public class CreatePersonActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_person);
+
         btnSaveMember = (Button) findViewById(R.id.btnSaveMember);
         txtFirstName = (EditText) findViewById(R.id.txtFirstName);
         txtName = (EditText) findViewById(R.id.txtName);
         txtAge = (EditText) findViewById(R.id.txtAge);
         spSkillLevel = (Spinner) findViewById(R.id.spSkillLevel);
-
-        final int teamId = getIntent().getIntExtra("teamId", -1);
-        if (teamId < 0) {
-            Log.e("TeamBuilder", "Error. Current team Id not found. Couldn't read out current team.");
-            return;
-        }
 
         spSkillLevel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -62,9 +58,21 @@ public class CreatePersonActivity extends AppCompatActivity{
             }
         });
 
-        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(this, R.array.spSkillLevel, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(this, R.array.spSkillLevelEntries, android.R.layout.simple_spinner_item);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         spSkillLevel.setAdapter(arrayAdapter);
+
+        getPersonInformationForEdit(getIntent().getIntExtra("currentPersonId",-1));
+
+        final int teamId = getIntent().getIntExtra("teamId", -1);
+        if (teamId < 0) {
+            Log.e("TeamBuilder", "Error. Current team Id not found. Couldn't read out current team.");
+            return;
+        }
+
+
+
+
 
         btnSaveMember.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,5 +161,29 @@ public class CreatePersonActivity extends AppCompatActivity{
         newPerson.setTeamId(currentTeam.getId());
 
         return newPerson;
+    }
+
+    private boolean getPersonInformationForEdit(int currentPersonId)
+    {
+        if (currentPersonId == -1)
+            return false;
+
+            Person currentPerson = null;
+
+            try
+            {
+                currentPerson = RealmHelper.getRealmInstance().where(Person.class).equalTo("id",currentPersonId).findFirst();
+            }
+            catch(Exception exc)
+            {
+                Log.e("TeamBuilder","Unfortunately reading out the desired person failed. Details: " + exc.getMessage());
+            }
+
+            txtFirstName.setText(currentPerson.getFirstName());
+            txtName.setText(currentPerson.getLastName());
+            txtAge.setText(String.valueOf(currentPerson.getAge()));
+            spSkillLevel.setSelection(currentPerson.getSkillLevel());
+
+            return true;
     }
 }

@@ -86,7 +86,7 @@ public class TeamListActivity extends AppCompatActivity {
 
         mLayoutManager = new LinearLayoutManager(this);
         rvTeamView.setLayoutManager(mLayoutManager);
-        teamListAdapter = new RvTeamListAdapter(dataSet, getApplicationContext());
+        teamListAdapter = new RvTeamListAdapter(dataSet);
         rvTeamView.setAdapter(teamListAdapter);
     }
 

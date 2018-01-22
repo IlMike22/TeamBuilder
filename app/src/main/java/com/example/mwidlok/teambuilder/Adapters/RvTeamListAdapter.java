@@ -27,7 +27,7 @@ import io.realm.RealmResults;
 public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.ViewHolder>  {
 
     private List<Person> mDataSet = new ArrayList<>();
-    Context currentContext;
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -39,10 +39,9 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
         }
     }
 
-    public RvTeamListAdapter(List<Person> myDataSet, Context currentContext)
+    public RvTeamListAdapter(List<Person> myDataSet)
     {
         mDataSet = myDataSet;
-        this.currentContext = currentContext;
     }
 
     @Override
@@ -75,7 +74,7 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
                 Log.i("TeamBuilder","Clicked user is " + currentPerson.getFirstName() + " " + currentPerson.getLastName());
                 // now open new Activity for creating members and put in all data of selected member dataset
 
-                showMemberDetailActivity(currentContext, currentPerson);
+                showMemberDetailActivity(v.getContext(), currentPerson.getId());
 
             }
         });
@@ -86,11 +85,11 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
         return mDataSet.size();
     }
 
-    private void showMemberDetailActivity(Context context, Person currentPerson)
+    private void showMemberDetailActivity(Context context, int id)
     {
         // opens person detail view for showing and editing current clicked person in list.
         Intent i = new Intent(context, CreatePersonActivity.class);
-        i.putExtra("currentPerson", currentPerson);
+        i.putExtra("currentPersonId", id);
         context.startActivity(i);
     }
 
