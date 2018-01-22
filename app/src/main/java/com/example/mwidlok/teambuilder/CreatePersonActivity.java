@@ -62,64 +62,66 @@ public class CreatePersonActivity extends AppCompatActivity{
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         spSkillLevel.setAdapter(arrayAdapter);
 
-        getPersonInformationForEdit(getIntent().getIntExtra("currentPersonId",-1));
-
+        int id = getIntent().getIntExtra("currentPersonId",-1);
         final int teamId = getIntent().getIntExtra("teamId", -1);
-        if (teamId < 0) {
+
+        if (teamId < 0)
+        {
             Log.e("TeamBuilder", "Error. Current team Id not found. Couldn't read out current team.");
             return;
         }
 
+        if (id > -1)    // edit mode
+            getPersonInformationForEdit(id, teamId);
+        else
+        {
+            btnSaveMember.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Person newPerson = validateAndCreatePerson(teamId);
 
+                    // now query this request
+                    Realm myDb = RealmHelper.getRealmInstance();
 
+                    //getting amount of persons that are already saved in db. so we can get the current id.
+                    //getting also the amount of current team members. Therefore we catch all persons with current team id.
+                    int counter = 0;
+                    ArrayList<Person> personList = new ArrayList<Person>(myDb.where(Person.class).findAll());
+                    for (Person p : personList)
+                    {
+                        if (p.getTeamId() == teamId)
+                            counter++;
+                    }
 
+                    long personAmount = myDb.where(Person.class).count();
+                    Log.i("TeamBuilder information","There are " + personAmount + " persons in db at the moment.");
+                    Log.i("TeamBuilder information", counter + " persons belong to current team with id " + teamId);
 
-        btnSaveMember.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                    // creating realm transaction
+                    myDb.beginTransaction();
+                    newPerson.setId((int) personAmount);
+                    Log.i("TeamBuilder","Realm: New data gets id " + newPerson.getId());
 
-                Person newPerson = validateAndCreatePerson(teamId);
+                    myDb.copyToRealm(newPerson);
+                    myDb.commitTransaction();
+                    myDb.close();
+                    Log.i("TeamBuilder","Realm: New data successfully saved.");
 
-                // now query this request
-                Realm myDb = RealmHelper.getRealmInstance();
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("newPersonResult", newPerson);
+                    setResult(REQUEST_CODE_NEW_MEMBER_SET, returnIntent);
 
-                //getting amount of persons that are already saved in db. so we can get the current id.
-                //getting also the amount of current team members. Therefore we catch all persons with current team id.
-                int counter = 0;
-                ArrayList<Person> personList = new ArrayList<Person>(myDb.where(Person.class).findAll());
-                for (Person p : personList)
-                {
-                    if (p.getTeamId() == teamId)
-                        counter++;
+                    try
+                    {
+                        finish();
+                    }
+                    catch (Exception exc)
+                    {
+                        Log.e("TeamBuilder","Fehler. Details: " + exc.getMessage());
+                    }
                 }
-
-                long personAmount = myDb.where(Person.class).count();
-                Log.i("TeamBuilder information","There are " + personAmount + " persons in db at the moment.");
-                Log.i("TeamBuilder information", counter + " persons belong to current team with id " + teamId);
-
-                // creating realm transaction
-                myDb.beginTransaction();
-                newPerson.setId((int) personAmount);
-                Log.i("TeamBuilder","Realm: New data gets id " + newPerson.getId());
-
-                myDb.copyToRealm(newPerson);
-                myDb.commitTransaction();
-                Log.i("TeamBuilder","Realm: New data successfully saved.");
-
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra("newPersonResult", newPerson);
-                setResult(REQUEST_CODE_NEW_MEMBER_SET, returnIntent);
-
-                try
-                {
-                    finish();
-                }
-                catch (Exception exc)
-                {
-                    Log.e("TeamBuilder","Fehler. Details: " + exc.getMessage());
-                }
-            }
-        });
+            });
+        }
     }
 
     private Person validateAndCreatePerson(int teamId)
@@ -163,27 +165,70 @@ public class CreatePersonActivity extends AppCompatActivity{
         return newPerson;
     }
 
-    private boolean getPersonInformationForEdit(int currentPersonId)
+    private boolean getPersonInformationForEdit(final int id, final int teamId)
     {
-        if (currentPersonId == -1)
-            return false;
-
-            Person currentPerson = null;
-
             try
             {
-                currentPerson = RealmHelper.getRealmInstance().where(Person.class).equalTo("id",currentPersonId).findFirst();
+                final Person person = RealmHelper.getRealmInstance().where(Person.class).equalTo("id",id).findFirst();
+                txtFirstName.setText(person.getFirstName());
+                txtName.setText(person.getLastName());
+                txtAge.setText(String.valueOf(person.getAge()));
+                spSkillLevel.setSelection(person.getSkillLevel());
+
+                // todo hier könnte man anzeigen, dass sich die Person in Team xy befindet. Die Team Id haben wir.
+
+                // edit button text from create to update
+                btnSaveMember.setText("aktualisieren");
+
+                btnSaveMember.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (updatePersonData(id, teamId))
+                        {
+                            Log.i("TeamBuilder","Person updated successfully.");
+                        }
+                    }
+                });
+
+                return true;
+
             }
             catch(Exception exc)
             {
                 Log.e("TeamBuilder","Unfortunately reading out the desired person failed. Details: " + exc.getMessage());
+                return false;
             }
+    }
 
-            txtFirstName.setText(currentPerson.getFirstName());
-            txtName.setText(currentPerson.getLastName());
-            txtAge.setText(String.valueOf(currentPerson.getAge()));
-            spSkillLevel.setSelection(currentPerson.getSkillLevel());
+    private boolean updatePersonData(int id, int teamId)
+    {
+        try
+        {
+            Realm myDb = RealmHelper.getRealmInstance();
+            myDb.beginTransaction();
+            Person person = new Person();
+            person.setId(id);
+
+            person.setFirstName(txtFirstName.getText().toString());
+            person.setLastName(txtName.getText().toString());
+            person.setAge(Integer.parseInt(txtAge.getText().toString()));
+            person.setSkillLevel(spSkillLevel.getSelectedItemPosition());
+            person.setSkillLevelDescription(spSkillLevel.getSelectedItem().toString());
+            person.setTeamId(teamId);
+            myDb.createObject(Person.class, person);
+
+            myDb.copyToRealmOrUpdate(person);
+            myDb.commitTransaction();
+            myDb.close();
 
             return true;
+        }
+
+        catch(Exception exc)
+        {
+            Log.e("TeamBuilder","An error occured during updating person data. Details: " + exc.getMessage());
+            return false;
+        }
     }
+
 }

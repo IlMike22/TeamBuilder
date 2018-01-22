@@ -74,7 +74,7 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
                 Log.i("TeamBuilder","Clicked user is " + currentPerson.getFirstName() + " " + currentPerson.getLastName());
                 // now open new Activity for creating members and put in all data of selected member dataset
 
-                showMemberDetailActivity(v.getContext(), currentPerson.getId());
+                showMemberDetailActivity(v.getContext(), currentPerson.getId(), currentPerson.getTeamId());
 
             }
         });
@@ -85,13 +85,12 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
         return mDataSet.size();
     }
 
-    private void showMemberDetailActivity(Context context, int id)
+    private void showMemberDetailActivity(Context context, int id, int teamId)
     {
         // opens person detail view for showing and editing current clicked person in list.
         Intent i = new Intent(context, CreatePersonActivity.class);
         i.putExtra("currentPersonId", id);
+        i.putExtra("teamId", teamId);
         context.startActivity(i);
     }
-
-
 }

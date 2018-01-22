@@ -14,13 +14,12 @@ public class Person extends RealmObject implements Serializable{
 
     @PrimaryKey
     private int id;
-
     private String lastName;
     private int age;
     private String firstName;
     private int skillLevel;    // due to realm does not support enums we have to set skill level with integers. 0 = amateur, 1 = average, 2 = profi
     private int teamId;
-
+    private String skillLevelDescription;
 
     public int getTeamId() {
         return teamId;
@@ -37,7 +36,6 @@ public class Person extends RealmObject implements Serializable{
     public void setSkillLevelDescription(String skillLevelDescription) {
         this.skillLevelDescription = skillLevelDescription;
     }
-    private String skillLevelDescription;
 
     public Person()
     {
