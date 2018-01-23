@@ -109,17 +109,38 @@
         android:layout_width="313dp"
         android:layout_height="21dp"
         android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:text="Please define team member's skill level."
         app:layout_constraintBottom_toTopOf="@+id/spSkillLevel"
-        app:layout_constraintTop_toBottomOf="@+id/txtAge"
-        app:layout_constraintVertical_bias="0.894"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginLeft="8dp"
+        app:layout_constraintHorizontal_bias="0.145"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="0.509" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtAge"
+        app:layout_constraintVertical_bias="1.0" />
 
+    <Button
+        android:id="@+id/btnDeleteMember"
+        android:layout_width="136dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="36dp"
+        android:layout_marginTop="12dp"
+        android:text="Delete Member"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnSaveMember" />
+
+    <TextView
+        android:id="@+id/tvPersonInfo"
+        android:layout_width="334dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spSkillLevel" />
 
 
 </android.support.constraint.ConstraintLayout>

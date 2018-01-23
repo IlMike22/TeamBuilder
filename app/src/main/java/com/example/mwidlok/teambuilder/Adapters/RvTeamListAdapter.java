@@ -1,5 +1,6 @@
 package com.example.mwidlok.teambuilder.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import com.example.mwidlok.teambuilder.CreatePersonActivity;
 import com.example.mwidlok.teambuilder.Model.Person;
 import com.example.mwidlok.teambuilder.R;
+import com.example.mwidlok.teambuilder.TeamListActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +30,6 @@ import io.realm.RealmResults;
 public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.ViewHolder>  {
 
     private List<Person> mDataSet = new ArrayList<>();
-
 
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -91,6 +93,7 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
         Intent i = new Intent(context, CreatePersonActivity.class);
         i.putExtra("currentPersonId", id);
         i.putExtra("teamId", teamId);
-        context.startActivity(i);
+        ((TeamListActivity) context).startActivityForResult(i, 100);
+
     }
 }

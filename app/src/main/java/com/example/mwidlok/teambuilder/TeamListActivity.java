@@ -27,7 +27,8 @@ public class TeamListActivity extends AppCompatActivity {
     public final int REQUESTCODE_NEWTEAMMEMBER = 1;
     public ArrayList<Person> dataSet = new ArrayList<>();
     private RecyclerView.LayoutManager mLayoutManager;
-    private int REQUESTCODE_TEAMRESULT = 22;
+    private int REQUESTCODE_TEAMRESULT = 1;
+    private int REQUESTCODE_EDITTEAMMEMBER = 100;
     RecyclerView rvTeamView;
     RvTeamListAdapter teamListAdapter;
     Button btnGenerateTeams;
@@ -102,6 +103,12 @@ public class TeamListActivity extends AppCompatActivity {
                 // now update the adapter for list of team members
                 teamListAdapter.notifyDataSetChanged();
             }
+        }
+
+        if (requestCode == REQUESTCODE_EDITTEAMMEMBER)
+        {
+            // we come from edit-person-view, so we update the adapter to get all changes.
+            teamListAdapter.notifyDataSetChanged();
         }
 
         super.onActivityResult(requestCode, resultCode, data);

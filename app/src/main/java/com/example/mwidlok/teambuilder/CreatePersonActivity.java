@@ -1,6 +1,10 @@
 package com.example.mwidlok.teambuilder;
 
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,30 +14,25 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.example.mwidlok.teambuilder.Model.Person;
 import com.example.mwidlok.teambuilder.Model.Team;
-
 import java.util.ArrayList;
-
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.RealmObject;
-import io.realm.RealmQuery;
-import io.realm.RealmResults;
-
-import static com.example.mwidlok.teambuilder.MainActivity.REQUEST_CODE_EVENT_NAME_SET;
 
 public class CreatePersonActivity extends AppCompatActivity{
 
     Button btnSaveMember;
+    Button btnDeleteMember;
     EditText txtFirstName;
     EditText txtName;
     EditText txtAge;
     Spinner spSkillLevel;
+    TextView tvPersonInfo;
 
     private final int REQUEST_CODE_NEW_MEMBER_SET = 1;
+    private final int REQUESTCODE_EDITTEAMMEMBER= 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +40,12 @@ public class CreatePersonActivity extends AppCompatActivity{
         setContentView(R.layout.activity_create_person);
 
         btnSaveMember = (Button) findViewById(R.id.btnSaveMember);
+        btnDeleteMember = (Button) findViewById(R.id.btnDeleteMember);
         txtFirstName = (EditText) findViewById(R.id.txtFirstName);
         txtName = (EditText) findViewById(R.id.txtName);
         txtAge = (EditText) findViewById(R.id.txtAge);
         spSkillLevel = (Spinner) findViewById(R.id.spSkillLevel);
+        tvPersonInfo = (TextView) findViewById(R.id.tvPersonInfo);
 
         spSkillLevel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -71,8 +72,17 @@ public class CreatePersonActivity extends AppCompatActivity{
             return;
         }
 
-        if (id > -1)    // edit mode
+        if (id > -1)
+        {
+            // edit mode
+            btnDeleteMember.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i("TeamBuilder","Now delete this person per favore.");
+                }
+            });
             getPersonInformationForEdit(id, teamId);
+        }
         else
         {
             btnSaveMember.setOnClickListener(new View.OnClickListener() {
@@ -176,6 +186,11 @@ public class CreatePersonActivity extends AppCompatActivity{
                 spSkillLevel.setSelection(person.getSkillLevel());
 
                 // todo hier könnte man anzeigen, dass sich die Person in Team xy befindet. Die Team Id haben wir.
+                tvPersonInfo.setVisibility(View.VISIBLE);
+                tvPersonInfo.setText("This Person is part of Team " + teamId+1);
+
+                // show delete button to delete current person
+                btnDeleteMember.setVisibility(View.VISIBLE);
 
                 // edit button text from create to update
                 btnSaveMember.setText("aktualisieren");
@@ -186,6 +201,7 @@ public class CreatePersonActivity extends AppCompatActivity{
                         if (updatePersonData(id, teamId))
                         {
                             Log.i("TeamBuilder","Person updated successfully.");
+                            showStandardDialog();
                         }
                     }
                 });
@@ -198,6 +214,36 @@ public class CreatePersonActivity extends AppCompatActivity{
                 Log.e("TeamBuilder","Unfortunately reading out the desired person failed. Details: " + exc.getMessage());
                 return false;
             }
+    }
+
+    private void showStandardDialog()
+    {
+        try
+        {
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                builder = new AlertDialog.Builder(CreatePersonActivity.this,android.R.style.Theme_Material_Dialog_Alert);
+            else
+                builder = new AlertDialog.Builder(CreatePersonActivity.this);
+
+            builder.setTitle("Person updated")
+                    .setMessage("The person was successfully updated.")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Log.i("TeamBuilder","Ok clicked. Now turn back to overview.");
+                            setResult(REQUESTCODE_EDITTEAMMEMBER);
+                            finish();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .show();
+        }
+        catch(Exception exc)
+        {
+            Log.e("TeamBuilder","Error showing standard dialog. Details: " + exc.getMessage());
+        }
+
     }
 
     private boolean updatePersonData(int id, int teamId)
@@ -215,7 +261,6 @@ public class CreatePersonActivity extends AppCompatActivity{
             person.setSkillLevel(spSkillLevel.getSelectedItemPosition());
             person.setSkillLevelDescription(spSkillLevel.getSelectedItem().toString());
             person.setTeamId(teamId);
-            myDb.createObject(Person.class, person);
 
             myDb.copyToRealmOrUpdate(person);
             myDb.commitTransaction();
