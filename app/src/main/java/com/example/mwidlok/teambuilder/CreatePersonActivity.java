@@ -1,7 +1,9 @@
 package com.example.mwidlok.teambuilder;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -20,6 +22,7 @@ import com.example.mwidlok.teambuilder.Model.Person;
 import com.example.mwidlok.teambuilder.Model.Team;
 import java.util.ArrayList;
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class CreatePersonActivity extends AppCompatActivity{
 
@@ -38,6 +41,8 @@ public class CreatePersonActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_person);
+
+        final Activity currentActivity = this;
 
         btnSaveMember = (Button) findViewById(R.id.btnSaveMember);
         btnDeleteMember = (Button) findViewById(R.id.btnDeleteMember);
@@ -63,7 +68,7 @@ public class CreatePersonActivity extends AppCompatActivity{
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         spSkillLevel.setAdapter(arrayAdapter);
 
-        int id = getIntent().getIntExtra("currentPersonId",-1);
+        final int id = getIntent().getIntExtra("currentPersonId",-1);
         final int teamId = getIntent().getIntExtra("teamId", -1);
 
         if (teamId < 0)
@@ -78,7 +83,23 @@ public class CreatePersonActivity extends AppCompatActivity{
             btnDeleteMember.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.i("TeamBuilder","Now delete this person per favore.");
+
+                    Log.i("TeamBuilder","Deleting person with id " + id );
+                    // todo show dialog with yes and no
+                    DialogHelper.showStandardDialog("Delete person","Do you really want to delete this person?",true, currentActivity, 0);
+                    Realm realmDb = RealmHelper.getRealmInstance();
+                    realmDb.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            RealmResults<Person> result = realm.where(Person.class).equalTo("id", id).findAll();
+                            if (result.deleteAllFromRealm())
+                                Log.i("TeamBuilder","Row was successfully deleted.");
+                            else
+                                Log.e("TeamBuilder","Cannot delete row.");
+                        }
+                    });
+
+
                 }
             });
             getPersonInformationForEdit(id, teamId);
@@ -177,6 +198,7 @@ public class CreatePersonActivity extends AppCompatActivity{
 
     private boolean getPersonInformationForEdit(final int id, final int teamId)
     {
+        final Activity currentActivity = this;
             try
             {
                 final Person person = RealmHelper.getRealmInstance().where(Person.class).equalTo("id",id).findFirst();
@@ -186,6 +208,7 @@ public class CreatePersonActivity extends AppCompatActivity{
                 spSkillLevel.setSelection(person.getSkillLevel());
 
                 // todo hier könnte man anzeigen, dass sich die Person in Team xy befindet. Die Team Id haben wir.
+                // Update: Ist evtl. nicht nötig. An dieser Stelle haben wir noch keine Information zum Team. (?)
                 tvPersonInfo.setVisibility(View.VISIBLE);
                 tvPersonInfo.setText("This Person is part of Team " + teamId+1);
 
@@ -201,7 +224,7 @@ public class CreatePersonActivity extends AppCompatActivity{
                         if (updatePersonData(id, teamId))
                         {
                             Log.i("TeamBuilder","Person updated successfully.");
-                            showStandardDialog();
+                            DialogHelper.showStandardDialog("Success", "The person was updated successfully.",false, currentActivity , REQUESTCODE_EDITTEAMMEMBER);
                         }
                     }
                 });
@@ -214,36 +237,6 @@ public class CreatePersonActivity extends AppCompatActivity{
                 Log.e("TeamBuilder","Unfortunately reading out the desired person failed. Details: " + exc.getMessage());
                 return false;
             }
-    }
-
-    private void showStandardDialog()
-    {
-        try
-        {
-            AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                builder = new AlertDialog.Builder(CreatePersonActivity.this,android.R.style.Theme_Material_Dialog_Alert);
-            else
-                builder = new AlertDialog.Builder(CreatePersonActivity.this);
-
-            builder.setTitle("Person updated")
-                    .setMessage("The person was successfully updated.")
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Log.i("TeamBuilder","Ok clicked. Now turn back to overview.");
-                            setResult(REQUESTCODE_EDITTEAMMEMBER);
-                            finish();
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_info)
-                    .show();
-        }
-        catch(Exception exc)
-        {
-            Log.e("TeamBuilder","Error showing standard dialog. Details: " + exc.getMessage());
-        }
-
     }
 
     private boolean updatePersonData(int id, int teamId)
