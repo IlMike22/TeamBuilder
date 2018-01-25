@@ -21,6 +21,9 @@ import android.widget.TextView;
 import com.example.mwidlok.teambuilder.Model.Person;
 import com.example.mwidlok.teambuilder.Model.Team;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -36,6 +39,7 @@ public class CreatePersonActivity extends AppCompatActivity{
 
     private final int REQUEST_CODE_NEW_MEMBER_SET = 1;
     private final int REQUESTCODE_EDITTEAMMEMBER= 100;
+    final Date currentDate = Calendar.getInstance().getTime();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,8 +102,6 @@ public class CreatePersonActivity extends AppCompatActivity{
                                 Log.e("TeamBuilder","Cannot delete row.");
                         }
                     });
-
-
                 }
             });
             getPersonInformationForEdit(id, teamId);
@@ -187,6 +189,7 @@ public class CreatePersonActivity extends AppCompatActivity{
         newPerson.setFirstName(firstName);
         newPerson.setLastName(lastName);
         newPerson.setAge(age);
+        newPerson.setCreateDate(currentDate);
 
         Realm myDb = RealmHelper.getRealmInstance();
 
@@ -207,10 +210,14 @@ public class CreatePersonActivity extends AppCompatActivity{
                 txtAge.setText(String.valueOf(person.getAge()));
                 spSkillLevel.setSelection(person.getSkillLevel());
 
-                // todo hier könnte man anzeigen, dass sich die Person in Team xy befindet. Die Team Id haben wir.
-                // Update: Ist evtl. nicht nötig. An dieser Stelle haben wir noch keine Information zum Team. (?)
+                String personInfo = "";
                 tvPersonInfo.setVisibility(View.VISIBLE);
-                tvPersonInfo.setText("This Person is part of Team " + teamId+1);
+                if (person.getCreateDate() != null)
+                    personInfo = "Person created on " + person.getCreateDate().toString();
+                if (person.getUpdateDate() != null)
+                    personInfo += "\nPerson updated on " + person.getUpdateDate().toString();
+
+                tvPersonInfo.setText(personInfo);
 
                 // show delete button to delete current person
                 btnDeleteMember.setVisibility(View.VISIBLE);
@@ -221,7 +228,7 @@ public class CreatePersonActivity extends AppCompatActivity{
                 btnSaveMember.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (updatePersonData(id, teamId))
+                        if (updatePersonData(id, teamId, person.getCreateDate()))
                         {
                             Log.i("TeamBuilder","Person updated successfully.");
                             DialogHelper.showStandardDialog("Success", "The person was updated successfully.",false, currentActivity , REQUESTCODE_EDITTEAMMEMBER);
@@ -239,7 +246,7 @@ public class CreatePersonActivity extends AppCompatActivity{
             }
     }
 
-    private boolean updatePersonData(int id, int teamId)
+    private boolean updatePersonData(int id, int teamId, Date createdDate)
     {
         try
         {
@@ -247,6 +254,9 @@ public class CreatePersonActivity extends AppCompatActivity{
             myDb.beginTransaction();
             Person person = new Person();
             person.setId(id);
+
+            person.setUpdateDate(currentDate);
+            person.setCreateDate(createdDate);
 
             person.setFirstName(txtFirstName.getText().toString());
             person.setLastName(txtName.getText().toString());

@@ -1,6 +1,7 @@
 package com.example.mwidlok.teambuilder.Model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -20,6 +21,24 @@ public class Person extends RealmObject implements Serializable{
     private int skillLevel;    // due to realm does not support enums we have to set skill level with integers. 0 = amateur, 1 = average, 2 = profi
     private int teamId;
     private String skillLevelDescription;
+    private Date createDate;
+    private Date updateDate;
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
+    }
 
     public int getTeamId() {
         return teamId;

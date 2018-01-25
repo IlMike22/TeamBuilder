@@ -49,6 +49,10 @@ public class TeamResultActivity extends AppCompatActivity {
         }
 
         ArrayList<ArrayList<Person>> result = generateTeams(teamMembers, teamId);
+
+        // todo wenn nicht genügend Teammitglieder vorhanden sind, Dialog anzeigen und Activity beenden
+        DialogHelper.showStandardDialog("Not enough persons","You must have at least 4 persons created to generate two teams.",false,this,0);
+
         String result1Output = "Folgende Personen sind in Team 1:\n";
         String result2Output = "Folgende Personen sind in Team 2:\n";
 
