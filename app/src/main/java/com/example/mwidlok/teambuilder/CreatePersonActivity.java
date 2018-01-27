@@ -3,7 +3,6 @@ package com.example.mwidlok.teambuilder;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -20,9 +19,11 @@ import android.widget.TextView;
 
 import com.example.mwidlok.teambuilder.Model.Person;
 import com.example.mwidlok.teambuilder.Model.Team;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import android.text.format.DateFormat;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -90,20 +91,10 @@ public class CreatePersonActivity extends AppCompatActivity{
 
                     Log.i("TeamBuilder","Deleting person with id " + id );
                     // todo show dialog with yes and no
-                    DialogHelper.showStandardDialog("Delete person","Do you really want to delete this person?",true, currentActivity, 0);
-                    Realm realmDb = RealmHelper.getRealmInstance();
-                    realmDb.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            RealmResults<Person> result = realm.where(Person.class).equalTo("id", id).findAll();
-                            if (result.deleteAllFromRealm())
-                                Log.i("TeamBuilder","Row was successfully deleted.");
-                            else
-                                Log.e("TeamBuilder","Cannot delete row.");
-                        }
-                    });
+                    showDeleteConfirmDialog(id);
                 }
             });
+
             getPersonInformationForEdit(id, teamId);
         }
         else
@@ -211,11 +202,19 @@ public class CreatePersonActivity extends AppCompatActivity{
                 spSkillLevel.setSelection(person.getSkillLevel());
 
                 String personInfo = "";
+                String formattedDate = "";
                 tvPersonInfo.setVisibility(View.VISIBLE);
                 if (person.getCreateDate() != null)
-                    personInfo = "Person created on " + person.getCreateDate().toString();
+                {
+                    formattedDate = (String) DateFormat.format("EEEE, dd.MM.yyyy, HH:mm:ss",person.getCreateDate());
+                    personInfo = "Person created on " + formattedDate;
+                }
+
                 if (person.getUpdateDate() != null)
-                    personInfo += "\nPerson updated on " + person.getUpdateDate().toString();
+                {
+                    formattedDate = (String) DateFormat.format("EEEE, dd.MM.yyyy, HH:mm:ss",person.getUpdateDate());
+                    personInfo += "\nPerson updated on " + formattedDate;
+                }
 
                 tvPersonInfo.setText(personInfo);
 
@@ -279,4 +278,59 @@ public class CreatePersonActivity extends AppCompatActivity{
         }
     }
 
+    public boolean deletePerson(final int id)
+    {
+        try
+        {
+            Realm realmDb = RealmHelper.getRealmInstance();
+            realmDb.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    RealmResults<Person> result = realm.where(Person.class).equalTo("id", id).findAll();
+                    if (result.deleteAllFromRealm())
+                        Log.i("TeamBuilder","Row was successfully deleted.");
+                    else
+                        Log.e("TeamBuilder","Cannot delete row.");
+                }
+            });
+        }
+        catch(Exception exc)
+        {
+            Log.e("TeamBuilder","Cannot delete row. Details: " + exc.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    private void showDeleteConfirmDialog(final int id)
+    {
+        // we have to put our code in the onclick listener..
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            builder = new AlertDialog.Builder(this,android.R.style.Theme_Material_Dialog_Alert);
+        else
+            builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Delete person")
+                .setMessage("You really want to delete this person?")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.i("TeamBuilder","Ok clicked. Now turn back to overview.");
+                        deletePerson(id);
+                        finish();
+                    }
+                });
+
+        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+        builder.setIcon(android.R.drawable.ic_dialog_info)
+                .show();
+        }
 }

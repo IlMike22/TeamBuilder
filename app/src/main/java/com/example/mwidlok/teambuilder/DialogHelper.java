@@ -58,7 +58,5 @@ public class DialogHelper {
         {
             Log.e("TeamBuilder","Error showing standard dialog. Details: " + exc.getMessage());
         }
-
     }
-
 }

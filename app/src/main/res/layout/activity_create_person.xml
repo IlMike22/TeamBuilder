@@ -95,10 +95,9 @@
 
     <Button
         android:id="@+id/btnSaveMember"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="36dp"
-        android:layout_marginRight="72dp"
+        android:layout_marginRight="32dp"
         android:layout_marginTop="348dp"
         android:text="Create member"
         app:layout_constraintRight_toRightOf="parent"
@@ -122,10 +121,10 @@
 
     <Button
         android:id="@+id/btnDeleteMember"
-        android:layout_width="136dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="36dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="16dp"
         android:text="Delete Member"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
