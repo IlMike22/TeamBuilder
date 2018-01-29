@@ -2,7 +2,9 @@ package com.example.mwidlok.teambuilder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private List<String> dataSet = new ArrayList<String>();
     private FloatingActionButton fab;
+    private NavigationView navView;
     static final int REQUEST_CODE_EVENT_NAME_SET = 1;
 
     @Override
@@ -59,6 +62,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        navView = (NavigationView) findViewById(R.id.navigation);
+
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Log.i("TeamBuilder","Item selected");
+                return false;
+            }
+        });
 
         Realm myDb = getRealmInstance();
         Log.i("TeamBuilder","Realm: Reading all persons from db..");
@@ -82,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new RvEventsAdapter(dataSet);
         mRecyclerView.setAdapter(mAdapter);
+
+
     }
 
     @Override
