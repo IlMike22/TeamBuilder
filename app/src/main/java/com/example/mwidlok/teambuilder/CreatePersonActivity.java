@@ -38,8 +38,9 @@ public class CreatePersonActivity extends AppCompatActivity{
     Spinner spSkillLevel;
     TextView tvPersonInfo;
 
-    private final int REQUEST_CODE_NEW_MEMBER_SET = 1;
-    private final int REQUESTCODE_EDITTEAMMEMBER= 100;
+    private final int REQUEST_CODE_NEW_MEMBER_SET = 100;
+    private final int REQUESTCODE_EDIT_MEMBER= 101;
+    private final int REQUESTCODE_DELETE_MEMBER = 102;
     final Date currentDate = Calendar.getInstance().getTime();
 
     @Override
@@ -160,12 +161,18 @@ public class CreatePersonActivity extends AppCompatActivity{
 
         Person newPerson = new Person();
 
+        newPerson.setFirstName(firstName);
+        newPerson.setLastName(lastName);
+        newPerson.setAge(age);
+        newPerson.setCreateDate(currentDate);
+
         String skillLevel = spSkillLevel.getSelectedItem().toString();
 
         switch (skillLevel)
         {
             case "Amateur":
                 newPerson.setSkillLevel(0);
+
                 break;
             case "Average":
                 newPerson.setSkillLevel(1);
@@ -177,10 +184,8 @@ public class CreatePersonActivity extends AppCompatActivity{
                 Log.e("TeamBuilder","No valid skill level selected");
                 return null;
         }
-        newPerson.setFirstName(firstName);
-        newPerson.setLastName(lastName);
-        newPerson.setAge(age);
-        newPerson.setCreateDate(currentDate);
+
+        newPerson.setSkillLevelDescription(skillLevel);
 
         Realm myDb = RealmHelper.getRealmInstance();
 
@@ -230,13 +235,12 @@ public class CreatePersonActivity extends AppCompatActivity{
                         if (updatePersonData(id, teamId, person.getCreateDate()))
                         {
                             Log.i("TeamBuilder","Person updated successfully.");
-                            DialogHelper.showStandardDialog("Success", "The person was updated successfully.",false, currentActivity , REQUESTCODE_EDITTEAMMEMBER);
+                            DialogHelper.showStandardDialog("Success", "The person was updated successfully.",false, currentActivity , REQUESTCODE_EDIT_MEMBER);
                         }
                     }
                 });
 
                 return true;
-
             }
             catch(Exception exc)
             {
@@ -278,7 +282,7 @@ public class CreatePersonActivity extends AppCompatActivity{
         }
     }
 
-    public boolean deletePerson(final int id)
+    public void deletePerson(final int id)
     {
         try
         {
@@ -297,10 +301,7 @@ public class CreatePersonActivity extends AppCompatActivity{
         catch(Exception exc)
         {
             Log.e("TeamBuilder","Cannot delete row. Details: " + exc.getMessage());
-            return false;
         }
-
-        return true;
     }
 
     private void showDeleteConfirmDialog(final int id)
@@ -319,6 +320,9 @@ public class CreatePersonActivity extends AppCompatActivity{
                     public void onClick(DialogInterface dialog, int which) {
                         Log.i("TeamBuilder","Ok clicked. Now turn back to overview.");
                         deletePerson(id);
+                        Intent returnIntent = new Intent();
+                        returnIntent.putExtra("deletePerson", id);
+                        setResult(REQUESTCODE_DELETE_MEMBER, returnIntent);
                         finish();
                     }
                 });

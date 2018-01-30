@@ -24,16 +24,17 @@ import io.realm.RealmResults;
 public class TeamListActivity extends AppCompatActivity {
 
     private FloatingActionButton fabNewTeamMember;
-    public final int REQUESTCODE_NEWTEAMMEMBER = 1;
+
     public ArrayList<Person> dataSet = new ArrayList<>();
     private RecyclerView.LayoutManager mLayoutManager;
-    private int REQUESTCODE_TEAMRESULT = 1;
-    private int REQUESTCODE_EDITTEAMMEMBER = 100;
     RecyclerView rvTeamView;
     RvTeamListAdapter teamListAdapter;
     Button btnGenerateTeams;
 
-
+    // Request Codes
+    private final int REQUESTCODE_NEWTEAMMEMBER = 100;
+    private final int REQUESTCODE_EDITTEAMMEMBER = 101;
+    private final int REQUESTCODE_DELETE_MEMBER = 102;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +71,7 @@ public class TeamListActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(getApplicationContext(), TeamResultActivity.class);
                 intent.putExtra("currentTeamId", teamId);
-                startActivityForResult(intent, REQUESTCODE_TEAMRESULT);
+                startActivity(intent);
             }
         });
 
@@ -95,21 +96,34 @@ public class TeamListActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUESTCODE_NEWTEAMMEMBER)
         {
-            if (data != null)
+            if (resultCode == REQUESTCODE_NEWTEAMMEMBER)
             {
-                Person newPerson = (Person) data.getSerializableExtra("newPersonResult");
-                Log.i("TeamBuilder","Got new Person from CreateTeamActivity named " + newPerson.getFirstName() + " " + newPerson.getLastName());
-                dataSet.add(newPerson);
-                // now update the adapter for list of team members
-                teamListAdapter.notifyDataSetChanged();
+                if (data != null)
+                {
+                    Person newPerson = (Person) data.getSerializableExtra("newPersonResult");
+                    Log.i("TeamBuilder","Got new Person from CreateTeamActivity named " + newPerson.getFirstName() + " " + newPerson.getLastName());
+                    dataSet.add(newPerson);
+                }
             }
-        }
+            else if (resultCode == REQUESTCODE_EDITTEAMMEMBER)
+            {
+                // do sth if person was deleted. update dataSet!
+                Log.i("TeamBilder","We are now in REQUESTCODE_DELETE_MEMBER");
+            }
+            else if (resultCode == REQUESTCODE_DELETE_MEMBER)
+            {
+                // do sth if person was edited.
+                Log.i("TeamBuilder","We are now in REQUESTCODE_EDIT_MEMBER");
+                int id = (int) data.getExtras().getInt("deletePerson");
 
-        if (requestCode == REQUESTCODE_EDITTEAMMEMBER)
-        {
-            // we come from edit-person-view, so we update the adapter to get all changes.
+                // todo error! fix it
+                // todo now getting position of deleted person and delete entry from dataSet!
+
+            }
+
             teamListAdapter.notifyDataSetChanged();
         }
+
 
         super.onActivityResult(requestCode, resultCode, data);
     }

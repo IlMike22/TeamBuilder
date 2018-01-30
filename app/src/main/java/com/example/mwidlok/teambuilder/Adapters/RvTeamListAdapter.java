@@ -64,8 +64,8 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
         final Person currentPerson = mDataSet.get(position);
 
         tvName.setText(currentPerson.getFirstName() + " " + currentPerson.getLastName());
-        tvAge.setText("Alter: " + String.valueOf(currentPerson.getAge()));
-        tvSkillLevel.setText("Skill Level: " + String.valueOf(currentPerson.getSkillLevel()));
+        tvAge.setText(String.valueOf(currentPerson.getAge() + " Jahre alt"));
+        tvSkillLevel.setText(String.valueOf(currentPerson.getSkillLevelDescription()));
 
         holder.itemView.setOnClickListener(new View.OnClickListener()
         {
