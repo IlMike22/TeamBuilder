@@ -105,26 +105,31 @@ public class TeamListActivity extends AppCompatActivity {
                     dataSet.add(newPerson);
                 }
             }
-            else if (resultCode == REQUESTCODE_EDITTEAMMEMBER)
-            {
-                // do sth if person was deleted. update dataSet!
-                Log.i("TeamBilder","We are now in REQUESTCODE_DELETE_MEMBER");
-            }
             else if (resultCode == REQUESTCODE_DELETE_MEMBER)
             {
-                // do sth if person was edited.
-                Log.i("TeamBuilder","We are now in REQUESTCODE_EDIT_MEMBER");
+                // remove deleted person from dataset
                 int id = (int) data.getExtras().getInt("deletePerson");
+                Log.i("TeamBuilder","Id of deleted person is " + id + ". Remove person from dataset..");
 
-                // todo error! fix it
-                // todo now getting position of deleted person and delete entry from dataSet!
-
+                for (Person p : dataSet)
+                {
+                    try
+                    {
+                        if (p.getId() == id)
+                        {
+                            dataSet.remove(p);
+                            break;
+                        }
+                    }
+                    catch(Exception exc)
+                    {
+                        Log.e("TeamBuilder","Failed deleting person from dataset. Details: " + exc.getMessage());
+                    }
+                }
             }
 
             teamListAdapter.notifyDataSetChanged();
         }
-
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 

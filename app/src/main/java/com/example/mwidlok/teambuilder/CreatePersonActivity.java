@@ -127,10 +127,18 @@ public class CreatePersonActivity extends AppCompatActivity{
                     newPerson.setId((int) personAmount);
                     Log.i("TeamBuilder","Realm: New data gets id " + newPerson.getId());
 
-                    myDb.copyToRealm(newPerson);
-                    myDb.commitTransaction();
-                    myDb.close();
-                    Log.i("TeamBuilder","Realm: New data successfully saved.");
+                    try
+                    {
+                        myDb.copyToRealmOrUpdate(newPerson);
+                        myDb.commitTransaction();
+                        myDb.close();
+                        Log.i("TeamBuilder","Realm: New data successfully saved.");
+                    }
+                    catch(Exception exc)
+                    {
+                        Log.e("TeamBuilder","Failed to write in db. Details: " + exc.getMessage());
+                    }
+
 
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("newPersonResult", newPerson);
