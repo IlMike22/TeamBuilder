@@ -2,10 +2,15 @@ package com.example.mwidlok.teambuilder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private List<String> dataSet = new ArrayList<String>();
     private FloatingActionButton fab;
     private NavigationView navView;
+    private ActionBarDrawerToggle drawerToggle;
+    private DrawerLayout drawerLayout;
     static final int REQUEST_CODE_EVENT_NAME_SET = 1;
 
     @Override
@@ -52,7 +59,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         fab = (FloatingActionButton) findViewById(R.id.fabNewEvent);
+
+
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawerOpen, R.string.drawerClose){
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                getSupportActionBar().setTitle("TeamBuilder");
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                getSupportActionBar().setTitle("TeamBuilder");
+            }
+        };
+
+        drawerLayout.addDrawerListener(drawerToggle);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         navView = (NavigationView) findViewById(R.id.navigation);
-
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -83,9 +110,6 @@ public class MainActivity extends AppCompatActivity {
             dataSet.add(currentTeam.getName());
         }
 
-        //notwendig?
-        myDb.close();
-
         mRecyclerView = (RecyclerView) findViewById(R.id.rvEventsView);
         mRecyclerView.setHasFixedSize(true);
 
@@ -94,8 +118,18 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new RvEventsAdapter(dataSet);
         mRecyclerView.setAdapter(mAdapter);
+    }
 
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+        drawerToggle.syncState();
+    }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -115,6 +149,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (drawerToggle.onOptionsItemSelected(item))
+            return true;
+
         switch (item.getItemId())
         {
             case R.id.deleteDb:

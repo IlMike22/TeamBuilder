@@ -6,5 +6,7 @@
         <item>Average</item>
         <item>Profi</item>
     </string-array>
+    <string name="drawerOpen">Drawer open</string>
+    <string name="drawerClose">Drawer close</string>
     <string name="btnGenerateTeams">Teams generieren</string>
 </resources>
