@@ -9,4 +9,12 @@
     <string name="drawerOpen">Drawer open</string>
     <string name="drawerClose">Drawer close</string>
     <string name="btnGenerateTeams">Teams generieren</string>
+
+    <!--create person activity-->
+    <string name="btn_create_text">Create member</string>
+    <string name="tv_surname_text">Surname</string>
+    <string name="tv_firstname_text">Firstname</string>
+    <string name="tv_age_text">Age</string>
+    <string name="tv_skilllevel_text">"Please define team member's skill level."</string>
+    <string name="btn_delete_text">Delete Member</string>
 </resources>
