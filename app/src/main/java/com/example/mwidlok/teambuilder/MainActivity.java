@@ -59,7 +59,17 @@ public class MainActivity extends AppCompatActivity {
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         fab = (FloatingActionButton) findViewById(R.id.fabNewEvent);
+        navView = (NavigationView) findViewById(R.id.navigation);
 
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                Log.i("TeamBuilder", "Item selected");
+                item.setChecked(true);
+                drawerLayout.closeDrawers();
+                return true;
+            }
+        });
 
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawerOpen, R.string.drawerClose) {
             @Override
@@ -85,16 +95,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent createEventIntent = new Intent(v.getContext(), CreateEventActivity.class);
                 startActivityForResult(createEventIntent, REQUEST_CODE_EVENT_NAME_SET);
-            }
-        });
-
-        navView = (NavigationView) findViewById(R.id.navigation);
-
-        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                Log.i("TeamBuilder", "Item selected");
-                return false;
             }
         });
 
