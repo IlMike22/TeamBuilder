@@ -17,4 +17,8 @@
     <string name="tv_age_text">Age</string>
     <string name="tv_skilllevel_text">"Please define team member's skill level."</string>
     <string name="btn_delete_text">Delete Member</string>
+
+
+    <!-- Impressum -->
+    <string name="tv_about">Über TeamBuilder</string>
 </resources>

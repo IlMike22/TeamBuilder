@@ -1,17 +1,15 @@
 package com.example.mwidlok.teambuilder;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -63,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         fab = (FloatingActionButton) findViewById(R.id.fabNewEvent);
 
 
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawerOpen, R.string.drawerClose){
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawerOpen, R.string.drawerClose) {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
@@ -91,22 +89,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
         navView = (NavigationView) findViewById(R.id.navigation);
+
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Log.i("TeamBuilder","Item selected");
+            public boolean onNavigationItemSelected(MenuItem item) {
+                Log.i("TeamBuilder", "Item selected");
                 return false;
             }
         });
 
         Realm myDb = getRealmInstance();
-        Log.i("TeamBuilder","Realm: Reading all persons from db..");
+        Log.i("TeamBuilder", "Realm: Reading all persons from db..");
 
         RealmResults<Team> allTeams = myDb.where(Team.class).findAll();
 
-        for (Team currentTeam : allTeams)
-        {
-            Log.i("TeamBuilder","Realm: Found a team dataset named " + currentTeam.getName());
+        for (Team currentTeam : allTeams) {
+            Log.i("TeamBuilder", "Realm: Found a team dataset named " + currentTeam.getName());
             dataSet.add(currentTeam.getName());
         }
 
@@ -134,11 +132,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE_EVENT_NAME_SET)
-        {
+        if (requestCode == REQUEST_CODE_EVENT_NAME_SET) {
             String result;
-            if (data != null)
-            {
+            if (data != null) {
                 result = data.getStringExtra("result");
                 dataSet.add(result);
                 mAdapter.notifyDataSetChanged();
@@ -153,20 +149,19 @@ public class MainActivity extends AppCompatActivity {
         if (drawerToggle.onOptionsItemSelected(item))
             return true;
 
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case R.id.deleteDb:
-                Log.i("TeamBuilder","Delete Db Option selected");
+                Log.i("TeamBuilder", "Delete Db Option selected");
                 if (deleteDatabase())
-                    Toast.makeText(getApplicationContext(),"Realm database was successfully deleted.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Realm database was successfully deleted.", Toast.LENGTH_SHORT).show();
                 else
-                    Toast.makeText(getApplicationContext(),"Realm database couldn't be deleted.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Realm database couldn't be deleted.", Toast.LENGTH_SHORT).show();
             case R.id.showDbBrowser:
                 List<Class<? extends RealmObject>> classes = new ArrayList<>();
                 classes.add(Person.class);
                 classes.add(Team.class);
 
-                Log.i("TeamBuilder","No showing Realm Browser");
+                Log.i("TeamBuilder", "No showing Realm Browser");
                 new RealmBrowser.Builder(this)
                         .add(getRealmInstance(), classes)
                         .show();
@@ -175,8 +170,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private Realm getRealmInstance()
-    {
+    private Realm getRealmInstance() {
         Realm.init(getApplicationContext());
         RealmConfiguration realmConfig = new RealmConfiguration.Builder()
                 .name("myRealmDatabase.realm")
@@ -187,10 +181,9 @@ public class MainActivity extends AppCompatActivity {
         return Realm.getInstance(realmConfig);
     }
 
-    private boolean deleteDatabase()
-    {
+    private boolean deleteDatabase() {
         Realm myDb = RealmHelper.getRealmInstance();
-        Log.i("TeamBuilder","Trying to delete realm db..");
+        Log.i("TeamBuilder", "Trying to delete realm db..");
         myDb.close();
 
         return Realm.deleteRealm(myDb.getConfiguration());
