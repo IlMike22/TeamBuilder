@@ -20,5 +20,8 @@
 
 
     <!-- Impressum -->
-    <string name="tv_about">Über TeamBuilder</string>
+    <string name="txt_impressum_headline">Über TeamBuilder</string>
+    <string name="txt_impressum_name">Team Builder</string>
+    <string name="txt_impressum_version">Version 0.1</string>
+    <string name="txt_impressum_author">by Michael Widlok</string>
 </resources>

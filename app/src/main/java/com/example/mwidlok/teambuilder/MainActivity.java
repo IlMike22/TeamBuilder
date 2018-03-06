@@ -67,6 +67,19 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("TeamBuilder", "Item selected");
                 item.setChecked(true);
                 drawerLayout.closeDrawers();
+                int itemId = item.getItemId();
+                switch(itemId)
+                {
+                    case R.id.nav_home:
+                        Log.i("TeamBuilder","hell yeah!");
+                        break;
+
+                    case R.id.nav_impressum:
+                       Intent intent = new Intent(getApplicationContext(), ImpressumActivity.class);
+                       startActivity(intent);
+                       break;
+
+                }
                 return true;
             }
         });
@@ -81,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                drawerView.bringToFront();
+                drawerView.requestLayout();
                 getSupportActionBar().setTitle("TeamBuilder");
             }
         };
