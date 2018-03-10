@@ -1,9 +1,9 @@
 package com.example.mwidlok.teambuilder;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,15 +13,13 @@ import android.widget.Toast;
 
 import com.example.mwidlok.teambuilder.Adapters.RvTeamListAdapter;
 import com.example.mwidlok.teambuilder.Model.Person;
-import com.example.mwidlok.teambuilder.Model.Team;
-import com.example.mwidlok.teambuilder.R;
 
 import java.util.ArrayList;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class TeamListActivity extends AppCompatActivity {
+public class TeamListActivity extends BaseActivity {
 
     private FloatingActionButton fabNewTeamMember;
 
@@ -40,6 +38,8 @@ public class TeamListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
+
+
         fabNewTeamMember = (FloatingActionButton) findViewById(R.id.fabnewTeamMember);
         btnGenerateTeams = (Button) findViewById(R.id.btnGenerateTeams);
 
@@ -90,6 +90,8 @@ public class TeamListActivity extends AppCompatActivity {
         rvTeamView.setLayoutManager(mLayoutManager);
         teamListAdapter = new RvTeamListAdapter(dataSet);
         rvTeamView.setAdapter(teamListAdapter);
+
+
     }
 
     @Override

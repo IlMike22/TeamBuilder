@@ -20,7 +20,8 @@
         <activity android:name=".TeamListActivity" />
         <activity android:name=".CreateEventActivity" />
         <activity android:name=".TeamResultActivity" />
-        <activity android:name=".ImpressumActivity"></activity>
+        <activity android:name=".ImpressumActivity" />
+        <activity android:name=".BaseActivity"></activity>
     </application>
 
 </manifest>
