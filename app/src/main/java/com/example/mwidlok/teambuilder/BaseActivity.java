@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -32,8 +33,14 @@ public class BaseActivity extends AppCompatActivity {
     private ActionBarDrawerToggle drawerToggle;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void setContentView(View view) {
+        super.setContentView(view);
+        onCreateDrawer();
+    }
+
+    protected void onCreateDrawer() {
+        //super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_base);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -107,9 +114,10 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        drawerLayout.openDrawer(GravityCompat.START);
 
-        if (drawerToggle.onOptionsItemSelected(item))
-            return true;
+//        if (drawerToggle.onOptionsItemSelected(item))
+//            return true;
 
         switch (item.getItemId()) {
             case R.id.deleteDb:
