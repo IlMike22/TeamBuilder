@@ -16,12 +16,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CreatePersonActivity" />
-        <activity android:name=".TeamListActivity" />
-        <activity android:name=".CreateEventActivity" />
-        <activity android:name=".TeamResultActivity" />
-        <activity android:name=".ImpressumActivity" />
-        <activity android:name=".BaseActivity"></activity>
     </application>
 
 </manifest>

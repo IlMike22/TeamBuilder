@@ -12,14 +12,11 @@ import android.widget.TextView;
 import com.example.mwidlok.teambuilder.RealmHelper;
 import com.example.mwidlok.teambuilder.Model.Team;
 import com.example.mwidlok.teambuilder.R;
-import com.example.mwidlok.teambuilder.TeamListActivity;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 /**
@@ -84,8 +81,9 @@ public class RvEventsAdapter extends RecyclerView.Adapter<RvEventsAdapter.ViewHo
         RealmResults<Team> currentTeam = myRealm.where(Team.class).like("name",mDataSet.get(position)).findAll();
         // to be continued.
         int teamId = currentTeam.get(0).getId();
-        Intent i = new Intent(context, TeamListActivity.class);
-        i.putExtra("teamId",teamId);
-        context.startActivity(i);
+        // todo open new fragment, not new activity. use fragment manager
+//        Intent i = new Intent(context, TeamListActivity.class);
+//        i.putExtra("teamId",teamId);
+        //context.startActivity(i);
     }
 }

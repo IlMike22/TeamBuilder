@@ -27,19 +27,4 @@ public class ImpressumFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_impressum, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
 }
