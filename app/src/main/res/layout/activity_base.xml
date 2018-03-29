@@ -19,4 +19,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         app:menu="@menu/navitems" />
+
+    <fragment
+        android:id="@+id/frg_main"
+        android:name="com.example.mwidlok.teambuilder.MainFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        ></fragment>
 </android.support.v4.widget.DrawerLayout>
