@@ -1,90 +1,153 @@
 package com.example.mwidlok.teambuilder;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import com.example.mwidlok.teambuilder.Adapters.RvEventsAdapter;
+import android.widget.Toast;
+import com.example.mwidlok.teambuilder.Model.Person;
 import com.example.mwidlok.teambuilder.Model.Team;
+import com.scand.realmbrowser.RealmBrowser;
 import java.util.ArrayList;
 import java.util.List;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
+import io.realm.RealmObject;
 
-public class MainActivity extends BaseActivity {
+import static com.example.mwidlok.teambuilder.RealmHelper.getRealmInstance;
 
+public class MainActivity extends AppCompatActivity {
 
-    private List<String> dataSet = new ArrayList<String>();
-    private FloatingActionButton fab;
-    static final int REQUEST_CODE_EVENT_NAME_SET = 1;
-
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-
+    private DrawerLayout drawerLayout;
+    private NavigationView navView;
+    private ActionBarDrawerToggle drawerToggle;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        super.onCreateDrawer();
+    public void setContentView(View view) {
+        super.setContentView(view);
+        onCreateDrawer();
+    }
 
-        fab = (FloatingActionButton) findViewById(R.id.fabNewEvent);
+    protected void onCreateDrawer() {
+        //super.onCreate(savedInstanceState);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        setContentView(R.layout.activity_base);
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        navView = (NavigationView) findViewById(R.id.navigation);
+
+
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                Intent createEventIntent = new Intent(v.getContext(), CreateEventActivity.class);
-                startActivityForResult(createEventIntent, REQUEST_CODE_EVENT_NAME_SET);
+            public boolean onNavigationItemSelected(MenuItem item) {
+                Log.i("TeamBuilder", "Item selected");
+                item.setChecked(true);
+                drawerLayout.closeDrawers();
+                int itemId = item.getItemId();
+                switch(itemId)
+                {
+                    case R.id.nav_home:
+                        Log.i("TeamBuilder","hell yeah!");
+                        break;
+
+                    case R.id.nav_impressum:
+                        // todo open new fragment, not new activity. use fragment manager
+//                        Intent intent = new Intent(getApplicationContext(), ImpressumActivity.class);
+//                        startActivity(intent);
+                        break;
+
+                }
+                return true;
             }
         });
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.rvEventsView);
-        mRecyclerView.setHasFixedSize(true);
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawerOpen, R.string.drawerClose) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                getSupportActionBar().setTitle("TeamBuilder");
+            }
 
-        // setting Layout Manager for Recycler View
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new RvEventsAdapter(dataSet);
-        mRecyclerView.setAdapter(mAdapter);
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                drawerView.bringToFront();
+                drawerView.requestLayout();
+                getSupportActionBar().setTitle("TeamBuilder");
+            }
+        };
 
-        Realm myDb = getRealmInstance();
-        Log.i("TeamBuilder", "Realm: Reading all persons from db..");
-
-        RealmResults<Team> allTeams = myDb.where(Team.class).findAll();
-
-        for (Team currentTeam : allTeams) {
-            Log.i("TeamBuilder", "Realm: Found a team dataset named " + currentTeam.getName());
-            dataSet.add(currentTeam.getName());
-        }
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE_EVENT_NAME_SET) {
-            String result;
-            if (data != null) {
-                result = data.getStringExtra("result");
-                dataSet.add(result);
-                mAdapter.notifyDataSetChanged();
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.main, menu);
+        return true;
     }
 
-    private Realm getRealmInstance() {
-        Realm.init(getApplicationContext());
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder()
-                .name("myRealmDatabase.realm")
-                .schemaVersion(1)
-                .deleteRealmIfMigrationNeeded()
-                .build();
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+        drawerToggle.syncState();
+    }
 
-        return Realm.getInstance(realmConfig);
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        drawerLayout.openDrawer(GravityCompat.START);
+
+//        if (drawerToggle.onOptionsItemSelected(item))
+//            return true;
+
+        switch (item.getItemId()) {
+            case R.id.deleteDb:
+                Log.i("TeamBuilder", "Delete Db Option selected");
+                if (deleteDatabase())
+                    Toast.makeText(getApplicationContext(), "Realm database was successfully deleted.", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(getApplicationContext(), "Realm database couldn't be deleted.", Toast.LENGTH_SHORT).show();
+            case R.id.showDbBrowser:
+                List<Class<? extends RealmObject>> classes = new ArrayList<>();
+                classes.add(Person.class);
+                classes.add(Team.class);
+
+                Log.i("TeamBuilder", "No showing Realm Browser");
+                new RealmBrowser.Builder(this)
+                        .add(getRealmInstance(), classes)
+                        .show();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private boolean deleteDatabase() {
+        Realm myDb = RealmHelper.getRealmInstance();
+        Log.i("TeamBuilder", "Trying to delete realm db..");
+        myDb.close();
+
+        return Realm.deleteRealm(myDb.getConfiguration());
     }
 
 
