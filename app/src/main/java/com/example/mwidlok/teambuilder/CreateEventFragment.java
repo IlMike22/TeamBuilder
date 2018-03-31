@@ -24,7 +24,6 @@ public class CreateEventFragment extends Fragment {
 
     Button btnSaveEvent;
     EditText txtEventName;
-    Activity activity = getActivity();
 
     public CreateEventFragment() {
         // Required empty public constructor
@@ -33,6 +32,7 @@ public class CreateEventFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
@@ -45,8 +45,8 @@ public class CreateEventFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        btnSaveEvent = (Button) activity.findViewById(R.id.btnSave);
-        txtEventName = (EditText) activity.findViewById(R.id.txtEventName);
+        btnSaveEvent = (Button) view.findViewById(R.id.btnSave);
+        txtEventName = (EditText) view.findViewById(R.id.txtEventName);
 
         btnSaveEvent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,7 +55,7 @@ public class CreateEventFragment extends Fragment {
 
                 if (eventName.isEmpty())
                 {
-                    Toast errorToast = Toast.makeText(activity.getApplicationContext(), "Please define a name for event", Toast.LENGTH_SHORT);
+                    Toast errorToast = Toast.makeText(getContext(), "Please define a name for event", Toast.LENGTH_SHORT);
                     errorToast.show();
                 }
                 else
@@ -77,8 +77,8 @@ public class CreateEventFragment extends Fragment {
                     Log.i("TeamBuilder","Now close NewTeamActivity and go back to overview.");
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("result",eventName);
-                    activity.setResult(REQUEST_CODE_EVENT_NAME_SET, returnIntent);
-                    activity.finish();
+//                    activity.setResult(REQUEST_CODE_EVENT_NAME_SET, returnIntent);
+//                    activity.finish();
                 }
             }
         });

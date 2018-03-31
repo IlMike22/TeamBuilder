@@ -1,35 +1,14 @@
-<<<<<<< HEAD
 <?xml version="1.0" encoding="utf-8"?>
-=======
->>>>>>> 4fa86b2b9cd7385042bc2bcc0f84e44ccddbd869
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-<<<<<<< HEAD
     tools:context=".MainFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
-</FrameLayout>
-=======
-    tools:context="com.example.mwidlok.teambuilder.MainFragment">
 
     <android.support.constraint.ConstraintLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="com.example.mwidlok.teambuilder.MainActivity">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Hello Main Fragment"/>
-
+        android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvEventsView"
@@ -61,4 +40,3 @@
     </android.support.constraint.ConstraintLayout>
 
 </FrameLayout>
->>>>>>> 4fa86b2b9cd7385042bc2bcc0f84e44ccddbd869
