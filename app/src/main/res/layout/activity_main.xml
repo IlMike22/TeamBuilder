@@ -1,23 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 
-    <android.support.v4.widget.DrawerLayout
-        android:id="@+id/drawerLayout"
+    <fragment
+        android:id="@+id/frg_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android">
-        <!-- The main content view -->
-        <FrameLayout
-            android:id="@+id/content_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        android:name="com.example.mwidlok.teambuilder.MainFragment"
+        tools:layout="@layout/fragment_main"></fragment>
 
-        <!-- The navigation drawer -->
-        <android.support.design.widget.NavigationView
-            android:id="@+id/navigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            app:menu="@menu/navitems" />
-    </android.support.v4.widget.DrawerLayout>
-
+</LinearLayout>

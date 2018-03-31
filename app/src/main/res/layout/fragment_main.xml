@@ -10,6 +10,12 @@
         android:layout_height="match_parent"
         tools:context="com.example.mwidlok.teambuilder.MainActivity">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Hello Main Fragment"/>
+
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvEventsView"
             android:layout_width="312dp"

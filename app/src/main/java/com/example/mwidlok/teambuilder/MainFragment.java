@@ -30,7 +30,8 @@ import io.realm.RealmResults;
  */
 public class MainFragment extends Fragment {
 
-    Activity activity = getActivity();private List<String> dataSet = new ArrayList<String>();
+    Activity activity = getActivity();
+    private List<String> dataSet = new ArrayList<String>();
     private FloatingActionButton fab;
     static final int REQUEST_CODE_EVENT_NAME_SET = 1;
 
@@ -55,7 +56,7 @@ public class MainFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        fab = (FloatingActionButton) activity.findViewById(R.id.fabNewEvent);
+        fab = (FloatingActionButton) view.findViewById(R.id.fabNewEvent);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,7 +67,7 @@ public class MainFragment extends Fragment {
             }
         });
 
-        mRecyclerView = (RecyclerView) activity.findViewById(R.id.rvEventsView);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.rvEventsView);
         mRecyclerView.setHasFixedSize(true);
 
         // setting Layout Manager for Recycler View
@@ -88,7 +89,7 @@ public class MainFragment extends Fragment {
     }
 
     private Realm getRealmInstance() {
-        Realm.init(activity.getApplicationContext());
+        Realm.init(getContext());
         RealmConfiguration realmConfig = new RealmConfiguration.Builder()
                 .name("myRealmDatabase.realm")
                 .schemaVersion(1)
