@@ -1,6 +1,10 @@
 package com.example.mwidlok.teambuilder;
 
 
+<<<<<<< HEAD
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+=======
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,10 +14,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+>>>>>>> 4fa86b2b9cd7385042bc2bcc0f84e44ccddbd869
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+<<<<<<< HEAD
+=======
 import com.example.mwidlok.teambuilder.Adapters.RvEventsAdapter;
 import com.example.mwidlok.teambuilder.Model.Team;
 
@@ -24,14 +31,21 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
+>>>>>>> 4fa86b2b9cd7385042bc2bcc0f84e44ccddbd869
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MainFragment extends Fragment {
 
+<<<<<<< HEAD
     Activity activity = getActivity();
     private List<String> dataSet = new ArrayList<String>();
+=======
+<<<<<<< HEAD
+=======
+    Activity activity = getActivity();private List<String> dataSet = new ArrayList<String>();
+>>>>>>> d90ff2c7fb3bfd72f94282cb2de09b5c00e2d2dd
     private FloatingActionButton fab;
     static final int REQUEST_CODE_EVENT_NAME_SET = 1;
 
@@ -39,6 +53,7 @@ public class MainFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+>>>>>>> 4fa86b2b9cd7385042bc2bcc0f84e44ccddbd869
 
     public MainFragment() {
         // Required empty public constructor
@@ -52,6 +67,8 @@ public class MainFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
+<<<<<<< HEAD
+=======
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -112,4 +129,5 @@ public class MainFragment extends Fragment {
 //        super.onActivityResult(requestCode, resultCode, data);
 //    }
 
+>>>>>>> 4fa86b2b9cd7385042bc2bcc0f84e44ccddbd869
 }
