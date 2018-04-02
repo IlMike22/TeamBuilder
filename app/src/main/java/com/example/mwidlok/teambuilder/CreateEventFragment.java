@@ -22,6 +22,13 @@ import static com.example.mwidlok.teambuilder.MainFragment.REQUEST_CODE_EVENT_NA
 
 public class CreateEventFragment extends Fragment {
 
+    OnEventCreatedListener mCallback;
+
+    public interface OnEventCreatedListener
+    {
+        void onEventCreated(String eventName);
+    }
+
     Button btnSaveEvent;
     EditText txtEventName;
 
@@ -77,6 +84,8 @@ public class CreateEventFragment extends Fragment {
                     Log.i("TeamBuilder","Now close NewTeamActivity and go back to overview.");
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("result",eventName);
+                    mCallback = (OnEventCreatedListener) getActivity();
+                    mCallback.onEventCreated(eventName);
 //                    activity.setResult(REQUEST_CODE_EVENT_NAME_SET, returnIntent);
 //                    activity.finish();
                 }

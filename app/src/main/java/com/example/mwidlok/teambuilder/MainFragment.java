@@ -1,10 +1,7 @@
 package com.example.mwidlok.teambuilder;
 
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -17,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.example.mwidlok.teambuilder.Adapters.RvEventsAdapter;
 import com.example.mwidlok.teambuilder.Model.Team;
 
@@ -36,6 +34,7 @@ public class MainFragment extends Fragment {
     private List<String> dataSet = new ArrayList<String>();
     private FloatingActionButton fab;
     static final int REQUEST_CODE_EVENT_NAME_SET = 1;
+    static final String newEventCode = Integer.toString(REQUEST_CODE_EVENT_NAME_SET);
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -57,15 +56,27 @@ public class MainFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // retrieve data
+
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            String eventName = bundle.getString(newEventCode, null);
+            if (eventName != null) {
+                //todo: a new event was created. add this event to list and make it clickable.
+                Log.i("TeamBuilder", "New event retrieved named " + eventName);
+            }
+
+        }
+
         fab = (FloatingActionButton) view.findViewById(R.id.fabNewEvent);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Fragment createEventFragment = new CreateEventFragment();
-                FragmentManager fragmentManager =  getActivity().getSupportFragmentManager();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.llyt_container,createEventFragment,"com.example.mwidlok.teambuilder.CreateEventFragment");
+                fragmentTransaction.replace(R.id.llyt_container, createEventFragment, "com.example.mwidlok.teambuilder.CreateEventFragment");
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
             }
@@ -115,4 +126,5 @@ public class MainFragment extends Fragment {
 //        }
 //        super.onActivityResult(requestCode, resultCode, data);
 //    }
+
 }

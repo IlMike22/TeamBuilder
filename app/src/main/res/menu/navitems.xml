@@ -2,13 +2,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_home"
-            android:icon="@drawable/realm_browser_ic_breadcrumb"
-            android:title="Test Entry 1"></item>
-        <item
-            android:id="@+id/nav_impressum"
-            android:icon="@drawable/realm_browser_ic_options"
-            android:title="@string/txt_impressum_headline"></item>
     </group>
 </menu>

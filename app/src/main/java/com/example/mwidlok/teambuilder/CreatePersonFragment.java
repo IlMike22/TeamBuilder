@@ -69,13 +69,13 @@ public class CreatePersonFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        btnSaveMember = (Button) getActivity().findViewById(R.id.btnSaveMember);
-        btnDeleteMember = (Button) activity.findViewById(R.id.btnDeleteMember);
-        txtFirstName = (EditText) activity.findViewById(R.id.txtFirstName);
-        txtName = (EditText) activity.findViewById(R.id.txtName);
-        txtAge = (EditText) activity.findViewById(R.id.txtAge);
-        spSkillLevel = (Spinner) activity.findViewById(R.id.spSkillLevel);
-        tvPersonInfo = (TextView) activity.findViewById(R.id.tvPersonInfo);
+        btnSaveMember = (Button) view.findViewById(R.id.btnSaveMember);
+        btnDeleteMember = (Button) view.findViewById(R.id.btnDeleteMember);
+        txtFirstName = (EditText) view.findViewById(R.id.txtFirstName);
+        txtName = (EditText) view.findViewById(R.id.txtName);
+        txtAge = (EditText) view.findViewById(R.id.txtAge);
+        spSkillLevel = (Spinner) view.findViewById(R.id.spSkillLevel);
+        tvPersonInfo = (TextView) view.findViewById(R.id.tvPersonInfo);
 
         spSkillLevel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

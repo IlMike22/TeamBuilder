@@ -82,6 +82,7 @@ public class RvEventsAdapter extends RecyclerView.Adapter<RvEventsAdapter.ViewHo
         // to be continued.
         int teamId = currentTeam.get(0).getId();
         // todo open new fragment, not new activity. use fragment manager
+
 //        Intent i = new Intent(context, TeamListActivity.class);
 //        i.putExtra("teamId",teamId);
         //context.startActivity(i);
