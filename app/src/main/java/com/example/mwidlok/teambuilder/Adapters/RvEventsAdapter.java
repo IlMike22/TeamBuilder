@@ -1,7 +1,6 @@
 package com.example.mwidlok.teambuilder.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.mwidlok.teambuilder.MainActivity;
 import com.example.mwidlok.teambuilder.RealmHelper;
 import com.example.mwidlok.teambuilder.Model.Team;
 import com.example.mwidlok.teambuilder.R;
@@ -65,7 +65,7 @@ public class RvEventsAdapter extends RecyclerView.Adapter<RvEventsAdapter.ViewHo
             public void onClick(View v)
             {
                 // now open new Activity
-                showEventDetailActivity(v.getContext(), position);
+                showEventDetailFragment(v.getContext(), position);
             }
         });
     }
@@ -75,14 +75,14 @@ public class RvEventsAdapter extends RecyclerView.Adapter<RvEventsAdapter.ViewHo
         return mDataSet.size();
     }
 
-    private void showEventDetailActivity(Context context, int position)
+    private void showEventDetailFragment(Context context, int position)
     {
         Realm myRealm = RealmHelper.getRealmInstance();
         RealmResults<Team> currentTeam = myRealm.where(Team.class).like("name",mDataSet.get(position)).findAll();
         // to be continued.
         int teamId = currentTeam.get(0).getId();
         // todo open new fragment, not new activity. use fragment manager
-
+        ((MainActivity) context).openEventDetailView(position);
 //        Intent i = new Intent(context, TeamListActivity.class);
 //        i.putExtra("teamId",teamId);
         //context.startActivity(i);

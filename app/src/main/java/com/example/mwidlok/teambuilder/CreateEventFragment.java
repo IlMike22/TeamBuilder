@@ -1,6 +1,5 @@
 package com.example.mwidlok.teambuilder;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,8 +16,6 @@ import com.example.mwidlok.teambuilder.Model.Team;
 
 import io.realm.Realm;
 
-import static com.example.mwidlok.teambuilder.MainFragment.REQUEST_CODE_EVENT_NAME_SET;
-
 
 public class CreateEventFragment extends Fragment {
 
@@ -26,7 +23,7 @@ public class CreateEventFragment extends Fragment {
 
     public interface OnEventCreatedListener
     {
-        void onEventCreated(String eventName);
+        void updateListAfterEventCreated(String eventName);
     }
 
     Button btnSaveEvent;
@@ -85,9 +82,7 @@ public class CreateEventFragment extends Fragment {
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("result",eventName);
                     mCallback = (OnEventCreatedListener) getActivity();
-                    mCallback.onEventCreated(eventName);
-//                    activity.setResult(REQUEST_CODE_EVENT_NAME_SET, returnIntent);
-//                    activity.finish();
+                    mCallback.updateListAfterEventCreated(eventName);
                 }
             }
         });

@@ -7,7 +7,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-public class MainActivity extends AppCompatActivity implements CreateEventFragment.OnEventCreatedListener {
+public class MainActivity extends AppCompatActivity implements  CreateEventFragment.OnEventCreatedListener,
+                                                                TeamListOverviewFragment.OnEventClickedForDetailViewListener
+
+{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,9 +26,13 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         fragmentTransaction.commit();
     }
 
+    // todo die ganzen transaction Codeschnipsel kann man zusammenfassen
+
+
     @Override
-    public void onEventCreated(String eventName) {
-        // a new event was created. show new item in list
+    public void updateListAfterEventCreated(String eventName) {
+        // a new event was created. open main fragment and show new item in list..
+
         Log.i("TeamBuilder", "New event called " + eventName);
 
         MainFragment mainFragment = new MainFragment();
@@ -37,6 +44,49 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         transaction.replace(R.id.llyt_container, mainFragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    public void openEventDetailView(int eventId) {
+        // open detail view for event with given event id..
+        TeamListOverviewFragment eventDetailFragment = new TeamListOverviewFragment();
+        Bundle args = new Bundle();
+        args.putInt("eventId",eventId);
+        eventDetailFragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.llyt_container,eventDetailFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    @Override
+    public void openNewPersonView(int eventId) {
+        CreatePersonFragment createPersonFragment = new CreatePersonFragment();
+        Bundle args = new Bundle();
+        args.putInt("eventId", eventId);
+        createPersonFragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.llyt_container, createPersonFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+    }
+
+    @Override
+    public void openTeamResultView(int eventId) {
+
+        TeamResultFragment resultFragment = new TeamResultFragment();
+        Bundle args = new Bundle();
+        args.putInt("eventId",eventId);
+        resultFragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.llyt_container, resultFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
     }
 }
 

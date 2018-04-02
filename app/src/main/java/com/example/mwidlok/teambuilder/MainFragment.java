@@ -56,17 +56,7 @@ public class MainFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // retrieve data
 
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            String eventName = bundle.getString(newEventCode, null);
-            if (eventName != null) {
-                //todo: a new event was created. add this event to list and make it clickable.
-                Log.i("TeamBuilder", "New event retrieved named " + eventName);
-            }
-
-        }
 
         fab = (FloatingActionButton) view.findViewById(R.id.fabNewEvent);
 
@@ -99,6 +89,20 @@ public class MainFragment extends Fragment {
         for (Team currentTeam : allTeams) {
             Log.i("TeamBuilder", "Realm: Found a team dataset named " + currentTeam.getName());
             dataSet.add(currentTeam.getName());
+        }
+
+        // retrieve data
+
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            String eventName = bundle.getString(newEventCode, null);
+            if (eventName != null) {
+                //todo: a new event was created. add this event to list and make it clickable.
+                Log.i("TeamBuilder", "New event retrieved named " + eventName);
+                dataSet.add(eventName);
+                mAdapter.notifyDataSetChanged();
+            }
+
         }
 
     }

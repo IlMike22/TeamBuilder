@@ -2,7 +2,6 @@ package com.example.mwidlok.teambuilder;
 
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -30,6 +29,13 @@ import io.realm.RealmResults;
  */
 public class TeamListOverviewFragment extends Fragment {
 
+    OnEventClickedForDetailViewListener mCallback;
+
+    public interface OnEventClickedForDetailViewListener {
+        void openEventDetailView(int eventId);
+        void openNewPersonView(int eventId);
+        void openTeamResultView(int eventId);
+    }
 
     private Activity activity = getActivity();
     private FloatingActionButton fabNewTeamMember;
@@ -49,7 +55,6 @@ public class TeamListOverviewFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,21 +65,28 @@ public class TeamListOverviewFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        fabNewTeamMember = (FloatingActionButton) activity.findViewById(R.id.fabnewTeamMember);
-        btnGenerateTeams = (Button) activity.findViewById(R.id.btnGenerateTeams);
+        fabNewTeamMember = (FloatingActionButton) view.findViewById(R.id.fabnewTeamMember);
+        btnGenerateTeams = (Button) view.findViewById(R.id.btnGenerateTeams);
 
-        final int teamId = activity.getIntent().getIntExtra("teamId",-1);
-
-        if (teamId < 0)
-        {
-            Log.e("Error","Team Id not found.");
-            return;
+        final int teamId;
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            teamId = bundle.getInt("teamId", -1);
+            if (teamId < 0) {
+                Log.e("Error", "Team Id not found.");
+                return;
+            }
         }
+        else
+            teamId = -1;
+
 
         fabNewTeamMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //todo open new fragment, not new activity. use fragment manager
+                mCallback = (MainActivity) getActivity();
+                mCallback.openNewPersonView(teamId);
 //                Intent intent = new Intent(activity.getApplicationContext(), CreatePersonActivity.class);
 //                intent.putExtra("teamId",teamId);
 //                startActivityForResult(intent, REQUESTCODE_NEWTEAMMEMBER);
@@ -84,9 +96,8 @@ public class TeamListOverviewFragment extends Fragment {
         btnGenerateTeams.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (dataSet.size() == 0)
-                {
-                    Toast.makeText(activity.getApplicationContext(),"No team members available to generate a team with.",Toast.LENGTH_SHORT).show();
+                if (dataSet.size() == 0) {
+                    Toast.makeText(activity.getApplicationContext(), "No team members available to generate a team with.", Toast.LENGTH_SHORT).show();
                     return;
                 }
 //                  // todo open new fragment, not new activity. use fragment manager
@@ -97,10 +108,9 @@ public class TeamListOverviewFragment extends Fragment {
         });
 
         Realm myDb = RealmHelper.getRealmInstance();
-        RealmResults<Person> allPersons= myDb.where(Person.class).equalTo("teamId",teamId).findAll();
+        RealmResults<Person> allPersons = myDb.where(Person.class).equalTo("teamId", teamId).findAll();
 
-        for (Person p : allPersons)
-        {
+        for (Person p : allPersons) {
             dataSet.add(p);
         }
 

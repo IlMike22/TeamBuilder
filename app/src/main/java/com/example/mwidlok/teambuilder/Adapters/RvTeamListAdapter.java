@@ -10,8 +10,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.mwidlok.teambuilder.MainActivity;
 import com.example.mwidlok.teambuilder.Model.Person;
 import com.example.mwidlok.teambuilder.R;
+import com.example.mwidlok.teambuilder.TeamListOverviewFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,7 @@ import java.util.List;
 public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.ViewHolder>  {
 
     private List<Person> mDataSet = new ArrayList<>();
+    TeamListOverviewFragment.OnEventClickedForDetailViewListener mCallback;
 
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -84,6 +87,8 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
     {
         // opens person detail view for showing and editing current clicked person in list.
         // todo open new fragment, not new activity. use fragment manager
+        //mCallback = (TeamListOverviewFragment.OnEventClickedForDetailViewListener) ((MainActivity) c;
+
 
 //        Intent i = new Intent(context, CreatePersonActivity.class);
 //        i.putExtra("currentPersonId", id);
