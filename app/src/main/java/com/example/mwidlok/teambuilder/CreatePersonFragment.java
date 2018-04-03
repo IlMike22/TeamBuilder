@@ -1,10 +1,8 @@
 package com.example.mwidlok.teambuilder;
 
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -51,18 +49,19 @@ public class CreatePersonFragment extends Fragment {
     TextView tvPersonInfo;
 
     private final int REQUEST_CODE_NEW_MEMBER_SET = 100;
-    private final int REQUESTCODE_EDIT_MEMBER= 101;
+    private final int REQUESTCODE_EDIT_MEMBER = 101;
     private final int REQUESTCODE_DELETE_MEMBER = 102;
     final Date currentDate = Calendar.getInstance().getTime();
 
     CreateNewPersonListener mCallback;
 
-    interface CreateNewPersonListener
-    {
-        void onNewPersonCreated(Person newPerson);
-        void onPersonEdited();
-    }
+    interface CreateNewPersonListener {
+        void onNewPersonCreated(Person newPerson, int eventId);
 
+        void onPersonEdited(int eventId);
+
+        void onPersonDeleted(int eventId);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,7 +75,7 @@ public class CreatePersonFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         final int eventId;
-        final int personId;
+        final Person currentPerson;
         btnSaveMember = (Button) view.findViewById(R.id.btnSaveMember);
         btnDeleteMember = (Button) view.findViewById(R.id.btnDeleteMember);
         txtFirstName = (EditText) view.findViewById(R.id.txtFirstName);
@@ -88,12 +87,12 @@ public class CreatePersonFragment extends Fragment {
         spSkillLevel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("TeamBuilder","Item " + parent.getItemAtPosition(position).toString() + " selected");
+                Log.i("TeamBuilder", "Item " + parent.getItemAtPosition(position).toString() + " selected");
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                Log.i("TeamBuilder","Warning. No item selected.");
+                Log.i("TeamBuilder", "Warning. No item selected.");
             }
         });
 
@@ -104,32 +103,26 @@ public class CreatePersonFragment extends Fragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             eventId = bundle.getInt("eventId", -1);
-            personId = bundle.getInt("personId", -1);
-        }
-
-        else
-        {
-            Log.e("TeamBuilder","The bundle is null. Cannot read event id for creating new person.");
+            currentPerson = (Person) bundle.getSerializable("person");
+        } else {
+            Log.e("TeamBuilder", "The bundle is null. Cannot read event id for creating new person.");
             return;
         }
 
-        if (personId > -1)
-        {
+        if (currentPerson != null) {
             // edit mode
             btnDeleteMember.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    Log.i("TeamBuilder","Deleting person with id " + personId );
+                    Log.i("TeamBuilder", "Deleting person with id " + currentPerson.getId());
                     // todo show dialog with yes and no
-                    showDeleteConfirmDialog(personId);
+                    showDeleteConfirmDialog(currentPerson);
                 }
             });
 
-            getPersonInformationForEdit(personId, eventId);
-        }
-        else
-        {
+            getPersonInformationForEdit(currentPerson, eventId);
+        } else {
             btnSaveMember.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -142,38 +135,34 @@ public class CreatePersonFragment extends Fragment {
                     //getting also the amount of current team members. Therefore we catch all persons with current team id.
                     int counter = 0;
                     ArrayList<Person> personList = new ArrayList<Person>(myDb.where(Person.class).findAll());
-                    for (Person p : personList)
-                    {
-                        if (p.getTeamId() == eventId)
+                    for (Person p : personList) {
+                        if (p.getEventId() == eventId)
                             counter++;
                     }
 
                     long personAmount = myDb.where(Person.class).count();
-                    Log.i("TeamBuilder information","There are " + personAmount + " persons in db at the moment.");
+                    Log.i("TeamBuilder information", "There are " + personAmount + " persons in db at the moment.");
                     Log.i("TeamBuilder information", counter + " persons belong to current team with id " + eventId);
 
                     // creating realm transaction
                     myDb.beginTransaction();
                     newPerson.setId((int) personAmount);
-                    Log.i("TeamBuilder","Realm: New data gets id " + newPerson.getId());
+                    Log.i("TeamBuilder", "Realm: New data gets id " + newPerson.getId());
 
-                    try
-                    {
+                    try {
                         myDb.copyToRealmOrUpdate(newPerson);
                         myDb.commitTransaction();
                         myDb.close();
-                        Log.i("TeamBuilder","Realm: New data successfully saved.");
-                    }
-                    catch(Exception exc)
-                    {
-                        Log.e("TeamBuilder","Failed to write in db. Details: " + exc.getMessage());
+                        Log.i("TeamBuilder", "Realm: New data successfully saved.");
+                    } catch (Exception exc) {
+                        Log.e("TeamBuilder", "Failed to write in db. Details: " + exc.getMessage());
                     }
 
                     mCallback = (MainActivity) getActivity();
-                    mCallback.onNewPersonCreated(newPerson);
+                    mCallback.onNewPersonCreated(newPerson, eventId);
 
-                        // todo after successfully created person, replace fragment with event detail view
-                        // todo here you can use fragment stack. event details view should be placed in stacktrace
+                    // todo after successfully created person, replace fragment with event detail view
+                    // todo here you can use fragment stack. event details view should be placed in stacktrace
 //                    Intent returnIntent = new Intent();
 //                    returnIntent.putExtra("newPersonResult", newPerson);
 //                    activity.setResult(REQUEST_CODE_NEW_MEMBER_SET, returnIntent);
@@ -191,8 +180,7 @@ public class CreatePersonFragment extends Fragment {
         }
     }
 
-    private Person validateAndCreatePerson(int teamId)
-    {
+    private Person validateAndCreatePerson(int teamId) {
         String firstName = txtFirstName.getText().toString();
         String lastName = txtName.getText().toString();
         int age = Integer.parseInt(txtAge.getText().toString());
@@ -210,8 +198,7 @@ public class CreatePersonFragment extends Fragment {
 
         String skillLevel = spSkillLevel.getSelectedItem().toString();
 
-        switch (skillLevel)
-        {
+        switch (skillLevel) {
             case "Amateur":
                 newPerson.setSkillLevel(0);
 
@@ -223,7 +210,7 @@ public class CreatePersonFragment extends Fragment {
                 newPerson.setSkillLevel(2);
                 break;
             default:
-                Log.e("TeamBuilder","No valid skill level selected");
+                Log.e("TeamBuilder", "No valid skill level selected");
                 return null;
         }
 
@@ -237,29 +224,25 @@ public class CreatePersonFragment extends Fragment {
         return newPerson;
     }
 
-    private boolean getPersonInformationForEdit(final int id, final int teamId)
-    {
+    private boolean getPersonInformationForEdit(final Person currentPerson, final int eventId) {
 
-        try
-        {
-            final Person person = RealmHelper.getRealmInstance().where(Person.class).equalTo("id",id).findFirst();
-            txtFirstName.setText(person.getFirstName());
-            txtName.setText(person.getLastName());
-            txtAge.setText(String.valueOf(person.getAge()));
-            spSkillLevel.setSelection(person.getSkillLevel());
+        try {
+            //final Person person = RealmHelper.getRealmInstance().where(Person.class).equalTo("id",personId).findFirst();
+            txtFirstName.setText(currentPerson.getFirstName());
+            txtName.setText(currentPerson.getLastName());
+            txtAge.setText(String.valueOf(currentPerson.getAge()));
+            spSkillLevel.setSelection(currentPerson.getSkillLevel());
 
             String personInfo = "";
             String formattedDate = "";
             tvPersonInfo.setVisibility(View.VISIBLE);
-            if (person.getCreateDate() != null)
-            {
-                formattedDate = (String) DateFormat.format("EEEE, dd.MM.yyyy, HH:mm:ss",person.getCreateDate());
+            if (currentPerson.getCreateDate() != null) {
+                formattedDate = (String) DateFormat.format("EEEE, dd.MM.yyyy, HH:mm:ss", currentPerson.getCreateDate());
                 personInfo = "Person created on " + formattedDate;
             }
 
-            if (person.getUpdateDate() != null)
-            {
-                formattedDate = (String) DateFormat.format("EEEE, dd.MM.yyyy, HH:mm:ss",person.getUpdateDate());
+            if (currentPerson.getUpdateDate() != null) {
+                formattedDate = (String) DateFormat.format("EEEE, dd.MM.yyyy, HH:mm:ss", currentPerson.getUpdateDate());
                 personInfo += "\nPerson updated on " + formattedDate;
             }
 
@@ -274,31 +257,26 @@ public class CreatePersonFragment extends Fragment {
             btnSaveMember.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (updatePersonData(id, teamId, person.getCreateDate()))
-                    {
-                        Log.i("TeamBuilder","Person updated successfully.");
-                        DialogHelper.showStandardDialog("Success", "The person was updated successfully.",false, getActivity() , REQUESTCODE_EDIT_MEMBER);
+                    if (updatePersonData(currentPerson.getId(), eventId, currentPerson.getCreateDate())) {
+                        Log.i("TeamBuilder", "Person updated successfully.");
+                        DialogHelper.showStandardDialog("Success", "The person was updated successfully.", false, getActivity(), REQUESTCODE_EDIT_MEMBER);
                     }
                 }
             });
 
             return true;
-        }
-        catch(Exception exc)
-        {
-            Log.e("TeamBuilder","Unfortunately reading out the desired person failed. Details: " + exc.getMessage());
+        } catch (Exception exc) {
+            Log.e("TeamBuilder", "Unfortunately reading out the desired person failed. Details: " + exc.getMessage());
             return false;
         }
     }
 
-    private boolean updatePersonData(int id, int teamId, Date createdDate)
-    {
-        try
-        {
+    private boolean updatePersonData(int personId, int eventId, Date createdDate) {
+        try {
             Realm myDb = RealmHelper.getRealmInstance();
             myDb.beginTransaction();
             Person person = new Person();
-            person.setId(id);
+            person.setId(personId);
 
             person.setUpdateDate(currentDate);
             person.setCreateDate(createdDate);
@@ -308,50 +286,42 @@ public class CreatePersonFragment extends Fragment {
             person.setAge(Integer.parseInt(txtAge.getText().toString()));
             person.setSkillLevel(spSkillLevel.getSelectedItemPosition());
             person.setSkillLevelDescription(spSkillLevel.getSelectedItem().toString());
-            person.setTeamId(teamId);
+            person.setTeamId(eventId);
 
             myDb.copyToRealmOrUpdate(person);
             myDb.commitTransaction();
             myDb.close();
 
             return true;
-        }
-
-        catch(Exception exc)
-        {
-            Log.e("TeamBuilder","An error occured during updating person data. Details: " + exc.getMessage());
+        } catch (Exception exc) {
+            Log.e("TeamBuilder", "An error occured during updating person data. Details: " + exc.getMessage());
             return false;
         }
     }
 
-    public void deletePerson(final int id)
-    {
-        try
-        {
+    public void deletePerson(final int id) {
+        try {
             Realm realmDb = RealmHelper.getRealmInstance();
             realmDb.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
                     RealmResults<Person> result = realm.where(Person.class).equalTo("id", id).findAll();
                     if (result.deleteAllFromRealm())
-                        Log.i("TeamBuilder","Row was successfully deleted.");
+                        Log.i("TeamBuilder", "Row was successfully deleted.");
                     else
-                        Log.e("TeamBuilder","Cannot delete row.");
+                        Log.e("TeamBuilder", "Cannot delete row.");
                 }
             });
-        }
-        catch(Exception exc)
-        {
-            Log.e("TeamBuilder","Cannot delete row. Details: " + exc.getMessage());
+        } catch (Exception exc) {
+            Log.e("TeamBuilder", "Cannot delete row. Details: " + exc.getMessage());
         }
     }
 
-    private void showDeleteConfirmDialog(final int id)
-    {
+    private void showDeleteConfirmDialog(final Person currentPerson) {
         // we have to put our code in the onclick listener..
         AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder = new AlertDialog.Builder(getActivity(),android.R.style.Theme_Material_Dialog_Alert);
+            builder = new AlertDialog.Builder(getActivity(), android.R.style.Theme_Material_Dialog_Alert);
         else
             builder = new AlertDialog.Builder(getActivity());
 
@@ -360,10 +330,11 @@ public class CreatePersonFragment extends Fragment {
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Log.i("TeamBuilder","Ok clicked. Now turn back to overview.");
-                        deletePerson(id);
+                        Log.i("TeamBuilder", "Ok clicked. Now turn back to overview.");
+                        deletePerson(currentPerson.getId());
                         //todo replace current fragment with event details view
                         // todo here you can use fragment stack. event details view should be placed in stacktrace
+
 //                        Intent returnIntent = new Intent();
 //                        returnIntent.putExtra("deletePerson", id);
 //                        activity.setResult(REQUESTCODE_DELETE_MEMBER, returnIntent);

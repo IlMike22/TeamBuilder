@@ -33,7 +33,11 @@ public class EventDetailFragment extends Fragment {
 
     public interface OnEventClickedForDetailViewListener {
         void openEventDetailView(int eventId);
+
         void openNewPersonView(int eventId);
+
+        void openPersonDetailView(Person person, int eventId);
+
         void openTeamResultView(int eventId);
     }
 
@@ -51,9 +55,6 @@ public class EventDetailFragment extends Fragment {
     private final int REQUESTCODE_DELETE_MEMBER = 102;
 
 
-
-
-
     public EventDetailFragment() {
         // Required empty public constructor
     }
@@ -68,26 +69,32 @@ public class EventDetailFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final int teamId;
+        final int eventId;
         final Person newPerson;
+        final int statusCode;
 
 
         fabNewTeamMember = (FloatingActionButton) view.findViewById(R.id.fabnewTeamMember);
         btnGenerateTeams = (Button) view.findViewById(R.id.btnGenerateTeams);
 
+
         Bundle bundle = this.getArguments();
-        if (bundle != null)
-        {
-            teamId = bundle.getInt("eventId", -1);
+        if (bundle != null) {
+            // we have two situation to handle. first: event detail view was called from main fragment (event id != null)
+            // scnd: we have created a new person and go back to event detail view (newPerson != null)
+            eventId = bundle.getInt("eventId", -1);
             newPerson = (Person) bundle.getSerializable("newPerson");
-            // todo take this newPerson which was created and update list adapter so the person is shown immediatelly in list
+            statusCode = bundle.getInt("statusCode");
+            if (newPerson != null) {
+                addNewPersonToList(newPerson);
+            }
 
-        }
+            if (statusCode > 0)
+                showStatusInToast(statusCode);
+        } else
+            eventId = -1;
 
-        else
-            teamId = -1;
-
-        if (teamId < 0) {
+        if (eventId < 0) {
             Log.e("Error", "Team Id not found.");
             return;
         }
@@ -96,7 +103,7 @@ public class EventDetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mCallback = (MainActivity) getActivity();
-                mCallback.openNewPersonView(teamId);
+                mCallback.openNewPersonView(eventId);
             }
         });
 
@@ -107,15 +114,11 @@ public class EventDetailFragment extends Fragment {
                     Toast.makeText(activity.getApplicationContext(), "No team members available to generate a team with.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-//                  // todo open new fragment, not new activity. use fragment manager
-//                Intent intent = new Intent(activity.getApplicationContext(), TeamResultActivity.class);
-//                intent.putExtra("currentTeamId", teamId);
-//                startActivity(intent);
             }
         });
 
         Realm myDb = RealmHelper.getRealmInstance();
-        RealmResults<Person> allPersons = myDb.where(Person.class).equalTo("teamId", teamId).findAll();
+        RealmResults<Person> allPersons = myDb.where(Person.class).equalTo("teamId", eventId).findAll();
 
         for (Person p : allPersons) {
             dataSet.add(p);
@@ -124,10 +127,32 @@ public class EventDetailFragment extends Fragment {
         rvTeamView = (RecyclerView) view.findViewById(R.id.rvTeam);
         rvTeamView.setHasFixedSize(true);
 
-        mLayoutManager = new LinearLayoutManager(activity);
+        mLayoutManager = new LinearLayoutManager(getActivity());
         rvTeamView.setLayoutManager(mLayoutManager);
         teamListAdapter = new RvTeamListAdapter(dataSet);
         rvTeamView.setAdapter(teamListAdapter);
+    }
+
+    private boolean addNewPersonToList(Person newPerson) {
+        try {
+            dataSet.add(newPerson);
+            teamListAdapter.notifyDataSetChanged();
+            return true;
+        } catch (Exception exc) {
+            Log.e("TeamBuilder", "Error trying to add new person to dataSet. Details: " + exc.getMessage());
+            return false;
+        }
+    }
+
+    private void showStatusInToast(int statusCode) {
+        String message = "";
+        // show a toast when person was edited oder deleted.
+        if (statusCode == REQUESTCODE_DELETE_MEMBER)
+            message = "The person was successfully deleted.";
+        else if (statusCode == REQUESTCODE_EDITTEAMMEMBER)
+            message = "The person was successfully edited.";
+        Toast.makeText(getActivity(), message,
+                Toast.LENGTH_LONG).show();
     }
 
 //    @Override

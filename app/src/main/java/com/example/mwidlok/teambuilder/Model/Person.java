@@ -40,7 +40,7 @@ public class Person extends RealmObject implements Serializable{
         this.updateDate = updateDate;
     }
 
-    public int getTeamId() {
+    public int getEventId() {
         return teamId;
     }
 
