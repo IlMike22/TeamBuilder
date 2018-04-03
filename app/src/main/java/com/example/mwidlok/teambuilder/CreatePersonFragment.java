@@ -54,7 +54,14 @@ public class CreatePersonFragment extends Fragment {
     private final int REQUESTCODE_EDIT_MEMBER= 101;
     private final int REQUESTCODE_DELETE_MEMBER = 102;
     final Date currentDate = Calendar.getInstance().getTime();
-    final Activity activity = getActivity();
+
+    CreateNewPersonListener mCallback;
+
+    interface CreateNewPersonListener
+    {
+        void onNewPersonCreated(Person newPerson);
+        void onPersonEdited();
+    }
 
 
     @Override
@@ -68,7 +75,8 @@ public class CreatePersonFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
+        final int eventId;
+        final int personId;
         btnSaveMember = (Button) view.findViewById(R.id.btnSaveMember);
         btnDeleteMember = (Button) view.findViewById(R.id.btnDeleteMember);
         txtFirstName = (EditText) view.findViewById(R.id.txtFirstName);
@@ -89,40 +97,43 @@ public class CreatePersonFragment extends Fragment {
             }
         });
 
-        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(activity, R.array.spSkillLevelEntries, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.spSkillLevelEntries, android.R.layout.simple_spinner_item);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         spSkillLevel.setAdapter(arrayAdapter);
 
-        final int id = getActivity().getIntent().getIntExtra("currentPersonId",-1);
-        final int teamId = getActivity().getIntent().getIntExtra("teamId", -1);
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            eventId = bundle.getInt("eventId", -1);
+            personId = bundle.getInt("personId", -1);
+        }
 
-        if (teamId < 0)
+        else
         {
-            Log.e("TeamBuilder", "Error. Current team Id not found. Couldn't read out current team.");
+            Log.e("TeamBuilder","The bundle is null. Cannot read event id for creating new person.");
             return;
         }
 
-        if (id > -1)
+        if (personId > -1)
         {
             // edit mode
             btnDeleteMember.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    Log.i("TeamBuilder","Deleting person with id " + id );
+                    Log.i("TeamBuilder","Deleting person with id " + personId );
                     // todo show dialog with yes and no
-                    showDeleteConfirmDialog(id);
+                    showDeleteConfirmDialog(personId);
                 }
             });
 
-            getPersonInformationForEdit(id, teamId);
+            getPersonInformationForEdit(personId, eventId);
         }
         else
         {
             btnSaveMember.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Person newPerson = validateAndCreatePerson(teamId);
+                    Person newPerson = validateAndCreatePerson(eventId);
 
                     // now query this request
                     Realm myDb = RealmHelper.getRealmInstance();
@@ -133,13 +144,13 @@ public class CreatePersonFragment extends Fragment {
                     ArrayList<Person> personList = new ArrayList<Person>(myDb.where(Person.class).findAll());
                     for (Person p : personList)
                     {
-                        if (p.getTeamId() == teamId)
+                        if (p.getTeamId() == eventId)
                             counter++;
                     }
 
                     long personAmount = myDb.where(Person.class).count();
                     Log.i("TeamBuilder information","There are " + personAmount + " persons in db at the moment.");
-                    Log.i("TeamBuilder information", counter + " persons belong to current team with id " + teamId);
+                    Log.i("TeamBuilder information", counter + " persons belong to current team with id " + eventId);
 
                     // creating realm transaction
                     myDb.beginTransaction();
@@ -158,19 +169,23 @@ public class CreatePersonFragment extends Fragment {
                         Log.e("TeamBuilder","Failed to write in db. Details: " + exc.getMessage());
                     }
 
+                    mCallback = (MainActivity) getActivity();
+                    mCallback.onNewPersonCreated(newPerson);
 
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("newPersonResult", newPerson);
-                    activity.setResult(REQUEST_CODE_NEW_MEMBER_SET, returnIntent);
+                        // todo after successfully created person, replace fragment with event detail view
+                        // todo here you can use fragment stack. event details view should be placed in stacktrace
+//                    Intent returnIntent = new Intent();
+//                    returnIntent.putExtra("newPersonResult", newPerson);
+//                    activity.setResult(REQUEST_CODE_NEW_MEMBER_SET, returnIntent);
 
-                    try
-                    {
-                        activity.finish();
-                    }
-                    catch (Exception exc)
-                    {
-                        Log.e("TeamBuilder","Fehler. Details: " + exc.getMessage());
-                    }
+//                    try
+//                    {
+//                        activity.finish();
+//                    }
+//                    catch (Exception exc)
+//                    {
+//                        Log.e("TeamBuilder","Fehler. Details: " + exc.getMessage());
+//                    }
                 }
             });
         }
@@ -262,7 +277,7 @@ public class CreatePersonFragment extends Fragment {
                     if (updatePersonData(id, teamId, person.getCreateDate()))
                     {
                         Log.i("TeamBuilder","Person updated successfully.");
-                        DialogHelper.showStandardDialog("Success", "The person was updated successfully.",false, activity , REQUESTCODE_EDIT_MEMBER);
+                        DialogHelper.showStandardDialog("Success", "The person was updated successfully.",false, getActivity() , REQUESTCODE_EDIT_MEMBER);
                     }
                 }
             });
@@ -336,9 +351,9 @@ public class CreatePersonFragment extends Fragment {
         // we have to put our code in the onclick listener..
         AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder = new AlertDialog.Builder(activity,android.R.style.Theme_Material_Dialog_Alert);
+            builder = new AlertDialog.Builder(getActivity(),android.R.style.Theme_Material_Dialog_Alert);
         else
-            builder = new AlertDialog.Builder(activity);
+            builder = new AlertDialog.Builder(getActivity());
 
         builder.setTitle("Delete person")
                 .setMessage("You really want to delete this person?")
@@ -347,10 +362,12 @@ public class CreatePersonFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         Log.i("TeamBuilder","Ok clicked. Now turn back to overview.");
                         deletePerson(id);
-                        Intent returnIntent = new Intent();
-                        returnIntent.putExtra("deletePerson", id);
-                        activity.setResult(REQUESTCODE_DELETE_MEMBER, returnIntent);
-                        activity.finish();
+                        //todo replace current fragment with event details view
+                        // todo here you can use fragment stack. event details view should be placed in stacktrace
+//                        Intent returnIntent = new Intent();
+//                        returnIntent.putExtra("deletePerson", id);
+//                        activity.setResult(REQUESTCODE_DELETE_MEMBER, returnIntent);
+//                        activity.finish();
                     }
                 });
 

@@ -7,8 +7,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.example.mwidlok.teambuilder.Model.Person;
+
 public class MainActivity extends AppCompatActivity implements  CreateEventFragment.OnEventCreatedListener,
-                                                                TeamListOverviewFragment.OnEventClickedForDetailViewListener
+                                                                EventDetailFragment.OnEventClickedForDetailViewListener,
+                                                                CreatePersonFragment.CreateNewPersonListener
 
 {
 
@@ -41,23 +44,19 @@ public class MainActivity extends AppCompatActivity implements  CreateEventFragm
         mainFragment.setArguments(args);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.llyt_container, mainFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        transaction.replace(R.id.llyt_container, mainFragment).addToBackStack(null).commit();
     }
 
     @Override
     public void openEventDetailView(int eventId) {
         // open detail view for event with given event id..
-        TeamListOverviewFragment eventDetailFragment = new TeamListOverviewFragment();
+        EventDetailFragment eventDetailFragment = new EventDetailFragment();
         Bundle args = new Bundle();
         args.putInt("eventId",eventId);
         eventDetailFragment.setArguments(args);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.llyt_container,eventDetailFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        transaction.replace(R.id.llyt_container,eventDetailFragment).addToBackStack(null).commit();
     }
 
     @Override
@@ -68,9 +67,7 @@ public class MainActivity extends AppCompatActivity implements  CreateEventFragm
         createPersonFragment.setArguments(args);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.llyt_container, createPersonFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        transaction.replace(R.id.llyt_container, createPersonFragment).addToBackStack(null).commit();
 
     }
 
@@ -83,9 +80,24 @@ public class MainActivity extends AppCompatActivity implements  CreateEventFragm
         resultFragment.setArguments(args);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.llyt_container, resultFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        transaction.replace(R.id.llyt_container, resultFragment).addToBackStack(null).commit();
+
+    }
+
+    @Override
+    public void onNewPersonCreated(Person newPerson) {
+        EventDetailFragment eventDetailFragment = new EventDetailFragment();
+        // todo here we need the new person dataset. this has to be transferred to eventOverview
+        // todo there you have to read it out and update the list adapter at startup
+        Bundle args = new Bundle();
+        args.putSerializable("newPerson", newPerson);
+        eventDetailFragment.setArguments(args);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.llyt_container,eventDetailFragment).commit();
+    }
+
+    @Override
+    public void onPersonEdited() {
 
     }
 }

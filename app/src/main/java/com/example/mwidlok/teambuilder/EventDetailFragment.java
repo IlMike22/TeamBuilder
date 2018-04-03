@@ -27,7 +27,7 @@ import io.realm.RealmResults;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TeamListOverviewFragment extends Fragment {
+public class EventDetailFragment extends Fragment {
 
     OnEventClickedForDetailViewListener mCallback;
 
@@ -51,7 +51,10 @@ public class TeamListOverviewFragment extends Fragment {
     private final int REQUESTCODE_DELETE_MEMBER = 102;
 
 
-    public TeamListOverviewFragment() {
+
+
+
+    public EventDetailFragment() {
         // Required empty public constructor
     }
 
@@ -65,31 +68,35 @@ public class TeamListOverviewFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        final int teamId;
+        final Person newPerson;
+
+
         fabNewTeamMember = (FloatingActionButton) view.findViewById(R.id.fabnewTeamMember);
         btnGenerateTeams = (Button) view.findViewById(R.id.btnGenerateTeams);
 
-        final int teamId;
         Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            teamId = bundle.getInt("teamId", -1);
-            if (teamId < 0) {
-                Log.e("Error", "Team Id not found.");
-                return;
-            }
+        if (bundle != null)
+        {
+            teamId = bundle.getInt("eventId", -1);
+            newPerson = (Person) bundle.getSerializable("newPerson");
+            // todo take this newPerson which was created and update list adapter so the person is shown immediatelly in list
+
         }
+
         else
             teamId = -1;
 
+        if (teamId < 0) {
+            Log.e("Error", "Team Id not found.");
+            return;
+        }
 
         fabNewTeamMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //todo open new fragment, not new activity. use fragment manager
                 mCallback = (MainActivity) getActivity();
                 mCallback.openNewPersonView(teamId);
-//                Intent intent = new Intent(activity.getApplicationContext(), CreatePersonActivity.class);
-//                intent.putExtra("teamId",teamId);
-//                startActivityForResult(intent, REQUESTCODE_NEWTEAMMEMBER);
             }
         });
 
@@ -114,7 +121,7 @@ public class TeamListOverviewFragment extends Fragment {
             dataSet.add(p);
         }
 
-        rvTeamView = (RecyclerView) activity.findViewById(R.id.rvTeam);
+        rvTeamView = (RecyclerView) view.findViewById(R.id.rvTeam);
         rvTeamView.setHasFixedSize(true);
 
         mLayoutManager = new LinearLayoutManager(activity);
