@@ -74,6 +74,8 @@ public class CreatePersonFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mCallback = (MainActivity) getActivity();
+
         final int eventId;
         final Person currentPerson;
         btnSaveMember = (Button) view.findViewById(R.id.btnSaveMember);
@@ -116,8 +118,7 @@ public class CreatePersonFragment extends Fragment {
                 public void onClick(View v) {
 
                     Log.i("TeamBuilder", "Deleting person with id " + currentPerson.getId());
-                    // todo show dialog with yes and no
-                    showDeleteConfirmDialog(currentPerson);
+                    showDeleteConfirmDialog(currentPerson, eventId);
                 }
             });
 
@@ -158,23 +159,10 @@ public class CreatePersonFragment extends Fragment {
                         Log.e("TeamBuilder", "Failed to write in db. Details: " + exc.getMessage());
                     }
 
-                    mCallback = (MainActivity) getActivity();
-                    mCallback.onNewPersonCreated(newPerson, eventId);
-
-                    // todo after successfully created person, replace fragment with event detail view
-                    // todo here you can use fragment stack. event details view should be placed in stacktrace
-//                    Intent returnIntent = new Intent();
-//                    returnIntent.putExtra("newPersonResult", newPerson);
-//                    activity.setResult(REQUEST_CODE_NEW_MEMBER_SET, returnIntent);
-
-//                    try
-//                    {
-//                        activity.finish();
-//                    }
-//                    catch (Exception exc)
-//                    {
-//                        Log.e("TeamBuilder","Fehler. Details: " + exc.getMessage());
-//                    }
+                    if (mCallback != null)
+                        mCallback.onNewPersonCreated(newPerson, eventId);
+                    else
+                        Log.e("TeamBuilder","mCallback is null, cannot call activity method onNewPersonCreated()");
                 }
             });
         }
@@ -259,7 +247,10 @@ public class CreatePersonFragment extends Fragment {
                 public void onClick(View v) {
                     if (updatePersonData(currentPerson.getId(), eventId, currentPerson.getCreateDate())) {
                         Log.i("TeamBuilder", "Person updated successfully.");
-                        DialogHelper.showStandardDialog("Success", "The person was updated successfully.", false, getActivity(), REQUESTCODE_EDIT_MEMBER);
+                        if (mCallback != null)
+                            mCallback.onPersonEdited(eventId);
+                        else
+                            Log.e("TeamBuilder","mCallback is null. Cannot call activity method onPersonEdited()");
                     }
                 }
             });
@@ -317,7 +308,7 @@ public class CreatePersonFragment extends Fragment {
         }
     }
 
-    private void showDeleteConfirmDialog(final Person currentPerson) {
+    private void showDeleteConfirmDialog(final Person currentPerson, final int eventId) {
         // we have to put our code in the onclick listener..
         AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
@@ -332,13 +323,12 @@ public class CreatePersonFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         Log.i("TeamBuilder", "Ok clicked. Now turn back to overview.");
                         deletePerson(currentPerson.getId());
-                        //todo replace current fragment with event details view
-                        // todo here you can use fragment stack. event details view should be placed in stacktrace
 
-//                        Intent returnIntent = new Intent();
-//                        returnIntent.putExtra("deletePerson", id);
-//                        activity.setResult(REQUESTCODE_DELETE_MEMBER, returnIntent);
-//                        activity.finish();
+                        if (mCallback != null)
+                            mCallback.onPersonDeleted(eventId);
+                        else
+                            Log.e("TeamBuilder","mCallback is null. Cannot call activity method onPersonDeleted()");
+
                     }
                 });
 

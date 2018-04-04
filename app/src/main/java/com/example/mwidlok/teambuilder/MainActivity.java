@@ -14,9 +14,10 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         CreatePersonFragment.CreateNewPersonListener
 
 {
+    private final int REQUESTCODE_MEMBER_CREATED = 100;
+    private final int REQUESTCODE_MEMBER_EDITED = 101;
+    private final int REQUESTCODE_MEMBER_DELETED = 102;
 
-    private final int REQUESTCODE_EDIT_MEMBER = 101;
-    private final int REQUESTCODE_DELETE_MEMBER = 102;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,11 +103,10 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
     @Override
     public void onNewPersonCreated(Person newPerson, int eventId) {
         EventDetailFragment eventDetailFragment = new EventDetailFragment();
-        // todo here we need the new person dataset. this has to be transferred to eventOverview
-        // todo there you have to read it out and update the list adapter at startup
         Bundle args = new Bundle();
         args.putSerializable("newPerson", newPerson);
         args.putInt("eventId", eventId);
+        args.putInt(getString(R.string.statuscode), REQUESTCODE_MEMBER_CREATED);
         eventDetailFragment.setArguments(args);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.llyt_container, eventDetailFragment).commit();
@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         EventDetailFragment eventDetailFragment = new EventDetailFragment();
         Bundle args = new Bundle();
         args.putInt("eventId", eventId);
-        args.putInt("statusCode", REQUESTCODE_EDIT_MEMBER);
+        args.putInt(getString(R.string.statuscode), REQUESTCODE_MEMBER_EDITED);
         eventDetailFragment.setArguments(args);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.llyt_container, eventDetailFragment).addToBackStack(null).commit();
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         EventDetailFragment eventDetailFragment = new EventDetailFragment();
         Bundle args = new Bundle();
         args.putInt("eventId", eventId);
-        args.putInt("statuscode", REQUESTCODE_DELETE_MEMBER);
+        args.putInt(getString(R.string.statuscode), REQUESTCODE_MEMBER_DELETED);
         eventDetailFragment.setArguments(args);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.llyt_container, eventDetailFragment).addToBackStack(null).commit();

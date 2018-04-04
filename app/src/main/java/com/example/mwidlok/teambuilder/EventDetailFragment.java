@@ -33,11 +33,8 @@ public class EventDetailFragment extends Fragment {
 
     public interface OnEventClickedForDetailViewListener {
         void openEventDetailView(int eventId);
-
         void openNewPersonView(int eventId);
-
         void openPersonDetailView(Person person, int eventId);
-
         void openTeamResultView(int eventId);
     }
 
@@ -50,8 +47,8 @@ public class EventDetailFragment extends Fragment {
     Button btnGenerateTeams;
 
     // Request Codes
-    private final int REQUESTCODE_NEWTEAMMEMBER = 100;
-    private final int REQUESTCODE_EDITTEAMMEMBER = 101;
+    private final int REQUESTCODE_MEMBER_CREATED = 100;
+    private final int REQUESTCODE_MEMBER_EDITED = 101;
     private final int REQUESTCODE_DELETE_MEMBER = 102;
 
 
@@ -70,8 +67,8 @@ public class EventDetailFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         final int eventId;
-        final Person newPerson;
-        final int statusCode;
+        Person newPerson = null;
+        int statusCode = 0;
 
 
         fabNewTeamMember = (FloatingActionButton) view.findViewById(R.id.fabnewTeamMember);
@@ -85,18 +82,44 @@ public class EventDetailFragment extends Fragment {
             eventId = bundle.getInt("eventId", -1);
             newPerson = (Person) bundle.getSerializable("newPerson");
             statusCode = bundle.getInt("statusCode");
-            if (newPerson != null) {
-                addNewPersonToList(newPerson);
-            }
-
-            if (statusCode > 0)
-                showStatusInToast(statusCode);
         } else
             eventId = -1;
 
         if (eventId < 0) {
             Log.e("Error", "Team Id not found.");
             return;
+        }
+
+        Realm myDb = RealmHelper.getRealmInstance();
+        RealmResults<Person> allPersons = myDb.where(Person.class).equalTo("teamId", eventId).findAll();
+
+        for (Person p : allPersons) {
+            dataSet.add(p);
+        }
+
+        rvTeamView = (RecyclerView) view.findViewById(R.id.rvTeam);
+        rvTeamView.setHasFixedSize(true);
+
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        rvTeamView.setLayoutManager(mLayoutManager);
+        teamListAdapter = new RvTeamListAdapter(dataSet);
+        rvTeamView.setAdapter(teamListAdapter);
+
+        if (statusCode == REQUESTCODE_MEMBER_CREATED && newPerson != null) {
+            showStatusInToast(REQUESTCODE_MEMBER_CREATED);
+            updateMemberListAdapter();
+        }
+
+        if (statusCode == REQUESTCODE_MEMBER_EDITED)
+        {
+            showStatusInToast(REQUESTCODE_MEMBER_EDITED);
+            updateMemberListAdapter();
+
+        }
+        else if (statusCode == REQUESTCODE_DELETE_MEMBER)
+        {
+            showStatusInToast(REQUESTCODE_DELETE_MEMBER);
+            updateMemberListAdapter();
         }
 
         fabNewTeamMember.setOnClickListener(new View.OnClickListener() {
@@ -116,91 +139,26 @@ public class EventDetailFragment extends Fragment {
                 }
             }
         });
-
-        Realm myDb = RealmHelper.getRealmInstance();
-        RealmResults<Person> allPersons = myDb.where(Person.class).equalTo("teamId", eventId).findAll();
-
-        for (Person p : allPersons) {
-            dataSet.add(p);
-        }
-
-        rvTeamView = (RecyclerView) view.findViewById(R.id.rvTeam);
-        rvTeamView.setHasFixedSize(true);
-
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        rvTeamView.setLayoutManager(mLayoutManager);
-        teamListAdapter = new RvTeamListAdapter(dataSet);
-        rvTeamView.setAdapter(teamListAdapter);
-    }
-
-    private boolean addNewPersonToList(Person newPerson) {
-        try {
-            dataSet.add(newPerson);
-            teamListAdapter.notifyDataSetChanged();
-            return true;
-        } catch (Exception exc) {
-            Log.e("TeamBuilder", "Error trying to add new person to dataSet. Details: " + exc.getMessage());
-            return false;
-        }
     }
 
     private void showStatusInToast(int statusCode) {
         String message = "";
         // show a toast when person was edited oder deleted.
         if (statusCode == REQUESTCODE_DELETE_MEMBER)
-            message = "The person was successfully deleted.";
-        else if (statusCode == REQUESTCODE_EDITTEAMMEMBER)
-            message = "The person was successfully edited.";
+            message = "Person successfully deleted.";
+        else if (statusCode == REQUESTCODE_MEMBER_EDITED)
+            message = "Person successfully edited.";
+        else if (statusCode == REQUESTCODE_MEMBER_CREATED)
+            message = "Person successfully created.";
         Toast.makeText(getActivity(), message,
                 Toast.LENGTH_LONG).show();
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == REQUESTCODE_NEWTEAMMEMBER)
-//        {
-//            if (resultCode == REQUESTCODE_NEWTEAMMEMBER)
-//            {
-//                if (data != null)
-//                {
-//                    Person newPerson = (Person) data.getSerializableExtra("newPersonResult");
-//                    Log.i("TeamBuilder","Got new Person from CreateTeamActivity named " + newPerson.getFirstName() + " " + newPerson.getLastName());
-//                    dataSet.add(newPerson);
-//                }
-//            }
-//            else if (resultCode == REQUESTCODE_DELETE_MEMBER)
-//            {
-//                // remove deleted person from dataset
-//                int id = (int) data.getExtras().getInt("deletePerson");
-//                Log.i("TeamBuilder","Id of deleted person is " + id + ". Remove person from dataset..");
-//
-//                for (Person p : dataSet)
-//                {
-//                    try
-//                    {
-//                        if (p.getId() == id)
-//                        {
-//                            dataSet.remove(p);
-//                            break;
-//                        }
-//                    }
-//                    catch(Exception exc)
-//                    {
-//                        Log.e("TeamBuilder","Failed deleting person from dataset. Details: " + exc.getMessage());
-//                    }
-//                }
-//            }
-//
-//            teamListAdapter.notifyDataSetChanged();
-//        }
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//
-//        //close realm
-//        RealmHelper.getRealmInstance().close();
-//        super.onDestroy();
-//    }
+    private void updateMemberListAdapter()
+    {
+        if (teamListAdapter != null)
+            teamListAdapter.notifyDataSetChanged();
+        else
+            Log.e("TeamBuilder","Cannot update member list adapter. Adapter is null.");
+    }
 }

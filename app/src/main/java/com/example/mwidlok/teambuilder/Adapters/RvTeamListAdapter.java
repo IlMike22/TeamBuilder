@@ -55,22 +55,28 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
         TextView tvSkillLevel = (TextView) llEventList.findViewById(R.id.tvSkillLevel);
 
         final Person currentPerson = mDataSet.get(position);
+        if (currentPerson.isValid())
+        {
+            tvName.setText(currentPerson.getFirstName() + " " + currentPerson.getLastName());
+            tvAge.setText(String.valueOf(currentPerson.getAge() + " Jahre alt"));
+            tvSkillLevel.setText(String.valueOf(currentPerson.getSkillLevelDescription()));
 
-        tvName.setText(currentPerson.getFirstName() + " " + currentPerson.getLastName());
-        tvAge.setText(String.valueOf(currentPerson.getAge() + " Jahre alt"));
-        tvSkillLevel.setText(String.valueOf(currentPerson.getSkillLevelDescription()));
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i("TeamBuilder", "User clicked Item " + position + " of Member List.");
+                    Log.i("TeamBuilder", "Clicked user is " + currentPerson.getFirstName() + " " + currentPerson.getLastName());
+                    // now open new Activity for creating members and put in all data of selected member dataset
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("TeamBuilder", "User clicked Item " + position + " of Member List.");
-                Log.i("TeamBuilder", "Clicked user is " + currentPerson.getFirstName() + " " + currentPerson.getLastName());
-                // now open new Activity for creating members and put in all data of selected member dataset
+                    showPersonDetailFragment(v.getContext(), currentPerson, currentPerson.getEventId());
 
-                showPersonDetailFragment(v.getContext(), currentPerson, currentPerson.getEventId());
-
-            }
-        });
+                }
+            });
+        }
+        else
+        {
+            tvName.setText("This dataset is invalid.");
+        }
     }
 
     @Override

@@ -25,6 +25,10 @@
     <string name="txt_impressum_version">Version 0.1</string>
     <string name="txt_impressum_author">by Michael Widlok</string>
 
+
+    <!--Bundle Keys-->
+    <string name="statuscode">statusCode</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello main fragment</string>
 </resources>
