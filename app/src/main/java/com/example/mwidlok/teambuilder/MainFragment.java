@@ -57,7 +57,6 @@ public class MainFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-
         fab = (FloatingActionButton) view.findViewById(R.id.fabNewEvent);
 
         fab.setOnClickListener(new View.OnClickListener() {

@@ -33,12 +33,14 @@ public class EventDetailFragment extends Fragment {
 
     public interface OnEventClickedForDetailViewListener {
         void openEventDetailView(int eventId);
+
         void openNewPersonView(int eventId);
+
         void openPersonDetailView(Person person, int eventId);
+
         void openTeamResultView(int eventId);
     }
 
-    private Activity activity = getActivity();
     private FloatingActionButton fabNewTeamMember;
     public ArrayList<Person> dataSet = new ArrayList<>();
     private RecyclerView.LayoutManager mLayoutManager;
@@ -59,6 +61,7 @@ public class EventDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mCallback = (MainActivity) getActivity();
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_team_list_overview, container, false);
     }
@@ -110,14 +113,11 @@ public class EventDetailFragment extends Fragment {
             updateMemberListAdapter();
         }
 
-        if (statusCode == REQUESTCODE_MEMBER_EDITED)
-        {
+        if (statusCode == REQUESTCODE_MEMBER_EDITED) {
             showStatusInToast(REQUESTCODE_MEMBER_EDITED);
             updateMemberListAdapter();
 
-        }
-        else if (statusCode == REQUESTCODE_DELETE_MEMBER)
-        {
+        } else if (statusCode == REQUESTCODE_DELETE_MEMBER) {
             showStatusInToast(REQUESTCODE_DELETE_MEMBER);
             updateMemberListAdapter();
         }
@@ -125,17 +125,25 @@ public class EventDetailFragment extends Fragment {
         fabNewTeamMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCallback = (MainActivity) getActivity();
-                mCallback.openNewPersonView(eventId);
+                if (mCallback != null)
+                    mCallback.openNewPersonView(eventId);
+                else
+                    Log.e("TeamBuilder", "mCallback is null. Cannot open newPersonView.");
             }
         });
 
         btnGenerateTeams.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (dataSet.size() == 0) {
-                    Toast.makeText(activity.getApplicationContext(), "No team members available to generate a team with.", Toast.LENGTH_SHORT).show();
-                    return;
+                if (dataSet.size() < 2) {
+                    // todo after dialog button ok click the app must not be closed. fix this issue
+                        DialogHelper.showStandardDialog(getString(R.string.msg_not_enough_persons_title), getString(R.string.msg_not_enough_persons_detail), false, getActivity(), 0);
+                    //Toast.makeText(getActivity().getApplicationContext(), R.string.eventDetail_error_not_enough_members, Toast.LENGTH_SHORT).show();
+                } else {
+                    if (mCallback != null)
+                        mCallback.openTeamResultView(eventId);
+                    else
+                        Log.e("TeamBuilder", "mCallback is null. Cannot open TeamResultView()");
                 }
             }
         });
@@ -145,20 +153,19 @@ public class EventDetailFragment extends Fragment {
         String message = "";
         // show a toast when person was edited oder deleted.
         if (statusCode == REQUESTCODE_DELETE_MEMBER)
-            message = "Person successfully deleted.";
+            message = getString(R.string.eventDetail_person_deleted_msg);
         else if (statusCode == REQUESTCODE_MEMBER_EDITED)
-            message = "Person successfully edited.";
+            message = getString(R.string.eventDetail_person_edited_msg);
         else if (statusCode == REQUESTCODE_MEMBER_CREATED)
-            message = "Person successfully created.";
+            message = getString(R.string.eventDetail_person_created_msg);
         Toast.makeText(getActivity(), message,
                 Toast.LENGTH_LONG).show();
     }
 
-    private void updateMemberListAdapter()
-    {
+    private void updateMemberListAdapter() {
         if (teamListAdapter != null)
             teamListAdapter.notifyDataSetChanged();
         else
-            Log.e("TeamBuilder","Cannot update member list adapter. Adapter is null.");
+            Log.e("TeamBuilder", "Cannot update member list adapter. Adapter is null.");
     }
 }

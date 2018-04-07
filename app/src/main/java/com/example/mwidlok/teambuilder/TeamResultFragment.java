@@ -1,8 +1,6 @@
 package com.example.mwidlok.teambuilder;
 
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,13 +25,20 @@ import io.realm.RealmResults;
 /**
  * A simple {@link Fragment} subclass.
  */
+
+
 public class TeamResultFragment extends Fragment {
 
     TextView tvResult1;
     TextView tvResult2;
     Button btnComplete;
-    Activity activity = getActivity();
+    int eventId = -1;
 
+    TeamResultListener mCallback;
+
+    interface TeamResultListener {
+        void onResultViewFinished();
+    }
 
 
     public TeamResultFragment() {
@@ -44,6 +49,7 @@ public class TeamResultFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mCallback = (MainActivity) getActivity();
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_team_result, container, false);
     }
@@ -52,74 +58,65 @@ public class TeamResultFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        tvResult1 = (TextView) activity.findViewById(R.id.tvResult1);
-        tvResult2 = (TextView) activity.findViewById(R.id.tvResult2);
-        btnComplete = (Button) activity.findViewById(R.id.btnComplete);
+        tvResult1 = (TextView) view.findViewById(R.id.tvResult1);
+        tvResult2 = (TextView) view.findViewById(R.id.tvResult2);
+        btnComplete = (Button) view.findViewById(R.id.btnComplete);
 
-        ArrayList<Person> teamMembers = new ArrayList<>();
-        int teamId = activity.getIntent().getIntExtra("currentTeamId",-1);
-        Realm myDb = RealmHelper.getRealmInstance();
-        RealmResults<Person> allPersons= myDb.where(Person.class).equalTo("teamId",teamId).findAll();
-        RealmList<Person> realmList = new RealmList<Person>();
-        realmList.addAll(allPersons.subList(0,allPersons.size()));
-        List<Person> personList = myDb.copyFromRealm(allPersons);
-
-        for (Person p : personList)
-        {
-            teamMembers.add(p);
-            Log.i("TeamBuilder","Here is Person " + p.getFirstName() + " " + p.getLastName());
-        }
-
-        ArrayList<ArrayList<Person>> result = generateTeams(teamMembers, teamId);
-
-        if (personList.size() < 4) {
-            DialogHelper.showStandardDialog("Not enough persons", "You must have at least 4 persons created to generate two teams.", false, activity, 0);
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            eventId = bundle.getInt("eventId", -1);
+        } else {
+            Log.e("TeamBuilder", getString(R.string.teamresult_error_bundle_null));
             return;
         }
 
-        String result1Output = "Folgende Personen sind in Team 1:\n";
-        String result2Output = "Folgende Personen sind in Team 2:\n";
+        ArrayList<Person> teamMembers = new ArrayList<>();
+
+        Realm myDb = RealmHelper.getRealmInstance();
+        RealmResults<Person> allPersons = myDb.where(Person.class).equalTo("teamId", eventId).findAll();
+        RealmList<Person> realmList = new RealmList<Person>();
+        realmList.addAll(allPersons.subList(0, allPersons.size()));
+        List<Person> personList = myDb.copyFromRealm(allPersons);
+
+        for (Person p : personList) {
+            teamMembers.add(p);
+            Log.i("TeamBuilder", "Here is Person " + p.getFirstName() + " " + p.getLastName());
+        }
+
+        ArrayList<ArrayList<Person>> result = generateTeams(teamMembers, eventId);
+
+        String result1Output = getString(R.string.team_result_persons_in_team1);
+        String result2Output = getString(R.string.team_result_persons_in_team2);
 
         btnComplete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(activity.getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+                mCallback.onResultViewFinished();
             }
         });
 
-        try
-        {
-            for (Person person : result.get(0))
-            {
+        try {
+            for (Person person : result.get(0)) {
                 result1Output += person.getFirstName() + " " + person.getLastName();
-                if (result.get(0).indexOf(person) != result.get(0).size()-1)
-                {
+                if (result.get(0).indexOf(person) != result.get(0).size() - 1) {
                     result1Output += ", ";
                 }
             }
-        }
-        catch(Exception exc)
-        {
-            Log.e("TeamBuilder","An error accured while putting out information about the team members.");
-            Log.e("TeamBuilder","Details: " + exc.getMessage());
+        } catch (Exception exc) {
+            Log.e("TeamBuilder", "An error accured while putting out information about the team members.");
+            Log.e("TeamBuilder", "Details: " + exc.getMessage());
         }
 
-        try
-        {
-            for (Person person : result.get(1))
-            {
+        try {
+            for (Person person : result.get(1)) {
                 result2Output += person.getFirstName() + " " + person.getLastName();
-                if (result.get(1).indexOf(person) != result.get(1).size()-1)
-                {
+                if (result.get(1).indexOf(person) != result.get(1).size() - 1) {
                     result2Output += ", ";
                 }
             }
-        }
-        catch (Exception exc)
-        {
-            Log.e("TeamBuilder","An error accured while putting out the info about the team memabers.");
-            Log.e("TeamBuilder","Details: " + exc.getMessage());
+        } catch (Exception exc) {
+            Log.e("TeamBuilder", "An error accured while putting out the info about the team memabers.");
+            Log.e("TeamBuilder", "Details: " + exc.getMessage());
         }
 
         if (tvResult1 != null)
@@ -128,19 +125,17 @@ public class TeamResultFragment extends Fragment {
             tvResult2.setText(result2Output);
     }
 
-    private ArrayList<ArrayList<Person>> generateTeams(ArrayList<Person> personList, int teamId)
-    {
+    private ArrayList<ArrayList<Person>> generateTeams(ArrayList<Person> personList, int teamId) {
 
         // first of all we must have enough (>= 4 member) to build two teams
-        if (personList.size() < 4)
-        {
-            Toast.makeText(activity.getApplicationContext(), "There must be at least 4 members to generate two teams.",Toast.LENGTH_SHORT).show();
+        if (personList.size() < 4) {
+            Toast.makeText(getActivity().getApplicationContext(), R.string.teamresult_error_not_enough_members, Toast.LENGTH_SHORT).show();
             return null;
         }
 
         BusinessLogic bl = new BusinessLogic();
         ArrayList<ArrayList<Person>> result = bl.createTeams(personList);
-        Log.i("TeamBuilder","Teams were successfully generated.");
+        Log.i("TeamBuilder", "Teams were successfully generated.");
         //todo Logik überarbeiten und Validieren
         return result;
     }

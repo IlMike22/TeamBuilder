@@ -31,4 +31,15 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello main fragment</string>
+    <string name="team_result_persons_in_team1">Folgende Personen sind in Team 1:</string>
+    <string name="team_result_persons_in_team2">Folgende Personen sind in Team 2:</string>
+    <string name="msg_not_enough_persons_title">Not enough persons</string>
+    <string name="msg_not_enough_persons_detail">You must have at least 4 persons created to generate two teams.</string>
+    <string name="teamresult_error_bundle_null">The bundle is null. Cannot read event id for creating team result.</string>
+    <string name="teamresult_error_not_enough_members">There must be at least 4 members to generate two teams.</string>
+    <string name="eventDetail_error_not_enough_members">Your member amount is to small. Please add some more members.</string>
+    <string name="eventDetail_person_deleted_msg">Person successfully deleted.</string>
+    <string name="eventDetail_person_edited_msg">Person successfully edited.</string>
+    <string name="eventDetail_person_created_msg">Person successfully created.</string>
+    <string name="create_person_update_btn">aktualisieren</string>
 </resources>

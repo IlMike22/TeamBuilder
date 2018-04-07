@@ -162,7 +162,7 @@ public class CreatePersonFragment extends Fragment {
                     if (mCallback != null)
                         mCallback.onNewPersonCreated(newPerson, eventId);
                     else
-                        Log.e("TeamBuilder","mCallback is null, cannot call activity method onNewPersonCreated()");
+                        Log.e("TeamBuilder", "mCallback is null, cannot call activity method onNewPersonCreated()");
                 }
             });
         }
@@ -240,7 +240,7 @@ public class CreatePersonFragment extends Fragment {
             btnDeleteMember.setVisibility(View.VISIBLE);
 
             // edit button text from create to update
-            btnSaveMember.setText("aktualisieren");
+            btnSaveMember.setText(R.string.create_person_update_btn);
 
             btnSaveMember.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -250,7 +250,7 @@ public class CreatePersonFragment extends Fragment {
                         if (mCallback != null)
                             mCallback.onPersonEdited(eventId);
                         else
-                            Log.e("TeamBuilder","mCallback is null. Cannot call activity method onPersonEdited()");
+                            Log.e("TeamBuilder", "mCallback is null. Cannot call activity method onPersonEdited()");
                     }
                 }
             });
@@ -327,7 +327,7 @@ public class CreatePersonFragment extends Fragment {
                         if (mCallback != null)
                             mCallback.onPersonDeleted(eventId);
                         else
-                            Log.e("TeamBuilder","mCallback is null. Cannot call activity method onPersonDeleted()");
+                            Log.e("TeamBuilder", "mCallback is null. Cannot call activity method onPersonDeleted()");
 
                     }
                 });

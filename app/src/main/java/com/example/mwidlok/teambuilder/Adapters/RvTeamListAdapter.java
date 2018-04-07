@@ -55,8 +55,7 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
         TextView tvSkillLevel = (TextView) llEventList.findViewById(R.id.tvSkillLevel);
 
         final Person currentPerson = mDataSet.get(position);
-        if (currentPerson.isValid())
-        {
+        if (currentPerson.isValid()) {
             tvName.setText(currentPerson.getFirstName() + " " + currentPerson.getLastName());
             tvAge.setText(String.valueOf(currentPerson.getAge() + " Jahre alt"));
             tvSkillLevel.setText(String.valueOf(currentPerson.getSkillLevelDescription()));
@@ -72,9 +71,7 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
 
                 }
             });
-        }
-        else
-        {
+        } else {
             tvName.setText("This dataset is invalid.");
         }
     }

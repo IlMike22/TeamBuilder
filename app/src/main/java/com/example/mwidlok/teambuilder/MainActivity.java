@@ -11,7 +11,8 @@ import com.example.mwidlok.teambuilder.Model.Person;
 
 public class MainActivity extends AppCompatActivity implements CreateEventFragment.OnEventCreatedListener,
         EventDetailFragment.OnEventClickedForDetailViewListener,
-        CreatePersonFragment.CreateNewPersonListener
+        CreatePersonFragment.CreateNewPersonListener,
+        TeamResultFragment.TeamResultListener
 
 {
     private final int REQUESTCODE_MEMBER_CREATED = 100;
@@ -32,9 +33,6 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
-
-    // todo die ganzen transaction Codeschnipsel kann man zusammenfassen
-
 
     @Override
     public void updateListAfterEventCreated(String eventName) {
@@ -59,8 +57,7 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         args.putInt("eventId", eventId);
         eventDetailFragment.setArguments(args);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.llyt_container, eventDetailFragment).addToBackStack(null).commit();
+        createTransactionAndReplaceFragment(eventDetailFragment);
     }
 
     @Override
@@ -70,21 +67,19 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         args.putInt("eventId", eventId);
         createPersonFragment.setArguments(args);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.llyt_container, createPersonFragment).addToBackStack(null).commit();
+        createTransactionAndReplaceFragment(createPersonFragment);
 
     }
 
     @Override
     public void openPersonDetailView(Person person, int eventId) {
-        CreatePersonFragment personDetailView = new CreatePersonFragment();
+        CreatePersonFragment personDetailViewFragment = new CreatePersonFragment();
         Bundle args = new Bundle();
         args.putSerializable("person", person);
         args.putInt("eventId", eventId);
-        personDetailView.setArguments(args);
+        personDetailViewFragment.setArguments(args);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.llyt_container, personDetailView).addToBackStack(null).commit();
+        createTransactionAndReplaceFragment(personDetailViewFragment);
     }
 
     @Override
@@ -95,8 +90,7 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         args.putInt("eventId", eventId);
         resultFragment.setArguments(args);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.llyt_container, resultFragment).addToBackStack(null).commit();
+        createTransactionAndReplaceFragment(resultFragment);
 
     }
 
@@ -108,8 +102,8 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         args.putInt("eventId", eventId);
         args.putInt(getString(R.string.statuscode), REQUESTCODE_MEMBER_CREATED);
         eventDetailFragment.setArguments(args);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.llyt_container, eventDetailFragment).commit();
+
+        createTransactionAndReplaceFragment(eventDetailFragment);
     }
 
     @Override
@@ -120,8 +114,8 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         args.putInt("eventId", eventId);
         args.putInt(getString(R.string.statuscode), REQUESTCODE_MEMBER_EDITED);
         eventDetailFragment.setArguments(args);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.llyt_container, eventDetailFragment).addToBackStack(null).commit();
+
+        createTransactionAndReplaceFragment(eventDetailFragment);
 
     }
 
@@ -133,9 +127,22 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         args.putInt("eventId", eventId);
         args.putInt(getString(R.string.statuscode), REQUESTCODE_MEMBER_DELETED);
         eventDetailFragment.setArguments(args);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.llyt_container, eventDetailFragment).addToBackStack(null).commit();
 
+        createTransactionAndReplaceFragment(eventDetailFragment);
+
+    }
+
+    @Override
+    public void onResultViewFinished() {
+        // called after user wants to close team result view. simply opens main fragment view.
+        MainFragment mainFragment = new MainFragment();
+
+        createTransactionAndReplaceFragment(mainFragment);
+    }
+
+    private void createTransactionAndReplaceFragment(Fragment currentFragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.llyt_container, currentFragment).addToBackStack(null).commit();
     }
 }
 
