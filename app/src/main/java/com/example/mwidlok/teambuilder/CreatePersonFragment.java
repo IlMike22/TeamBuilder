@@ -48,9 +48,6 @@ public class CreatePersonFragment extends Fragment {
     Spinner spSkillLevel;
     TextView tvPersonInfo;
 
-    private final int REQUEST_CODE_NEW_MEMBER_SET = 100;
-    private final int REQUESTCODE_EDIT_MEMBER = 101;
-    private final int REQUESTCODE_DELETE_MEMBER = 102;
     final Date currentDate = Calendar.getInstance().getTime();
 
     CreateNewPersonListener mCallback;
@@ -70,6 +67,8 @@ public class CreatePersonFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_create_person, container, false);
     }
 
+
+    
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -89,12 +88,12 @@ public class CreatePersonFragment extends Fragment {
         spSkillLevel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("TeamBuilder", "Item " + parent.getItemAtPosition(position).toString() + " selected");
+                Log.i(getString(R.string.app_title), "Item " + parent.getItemAtPosition(position).toString() + " selected");
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                Log.i("TeamBuilder", "Warning. No item selected.");
+                Log.i(getString(R.string.app_title), "Warning. No item selected.");
             }
         });
 
@@ -107,7 +106,7 @@ public class CreatePersonFragment extends Fragment {
             eventId = bundle.getInt("eventId", -1);
             currentPerson = (Person) bundle.getSerializable("person");
         } else {
-            Log.e("TeamBuilder", "The bundle is null. Cannot read event id for creating new person.");
+            Log.e(getString(R.string.app_title), "The bundle is null. Cannot read event id for creating new person.");
             return;
         }
 
@@ -117,7 +116,7 @@ public class CreatePersonFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    Log.i("TeamBuilder", "Deleting person with id " + currentPerson.getId());
+                    Log.i(getString(R.string.app_title), "Deleting person with id " + currentPerson.getId());
                     showDeleteConfirmDialog(currentPerson, eventId);
                 }
             });
@@ -128,6 +127,12 @@ public class CreatePersonFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Person newPerson = validateAndCreatePerson(eventId);
+
+                    if (newPerson == null)
+                    {
+                        showStandardDialog(getString(R.string.app_title),getString(R.string.create_person_data_needed_msg));
+                        return;
+                    }
 
                     // now query this request
                     Realm myDb = RealmHelper.getRealmInstance();
@@ -142,27 +147,27 @@ public class CreatePersonFragment extends Fragment {
                     }
 
                     long personAmount = myDb.where(Person.class).count();
-                    Log.i("TeamBuilder information", "There are " + personAmount + " persons in db at the moment.");
-                    Log.i("TeamBuilder information", counter + " persons belong to current team with id " + eventId);
+                    Log.i(getString(R.string.app_title), "There are " + personAmount + " persons in db at the moment.");
+                    Log.i(getString(R.string.app_title), counter + " persons belong to current team with id " + eventId);
 
                     // creating realm transaction
                     myDb.beginTransaction();
                     newPerson.setId((int) personAmount);
-                    Log.i("TeamBuilder", "Realm: New data gets id " + newPerson.getId());
+                    Log.i(getString(R.string.app_title), "Realm: New data gets id " + newPerson.getId());
 
                     try {
                         myDb.copyToRealmOrUpdate(newPerson);
                         myDb.commitTransaction();
                         myDb.close();
-                        Log.i("TeamBuilder", "Realm: New data successfully saved.");
+                        Log.i(getString(R.string.app_title), "Realm: New data successfully saved.");
                     } catch (Exception exc) {
-                        Log.e("TeamBuilder", "Failed to write in db. Details: " + exc.getMessage());
+                        Log.e(getString(R.string.app_title), "Failed to write in db. Details: " + exc.getMessage());
                     }
 
                     if (mCallback != null)
                         mCallback.onNewPersonCreated(newPerson, eventId);
                     else
-                        Log.e("TeamBuilder", "mCallback is null, cannot call activity method onNewPersonCreated()");
+                        Log.e(getString(R.string.app_title), "mCallback is null, cannot call activity method onNewPersonCreated()");
                 }
             });
         }
@@ -171,11 +176,14 @@ public class CreatePersonFragment extends Fragment {
     private Person validateAndCreatePerson(int teamId) {
         String firstName = txtFirstName.getText().toString();
         String lastName = txtName.getText().toString();
-        int age = Integer.parseInt(txtAge.getText().toString());
+        String ageString = txtAge.getText().toString();
 
-        if (firstName == "") return null;
-        if (lastName == "") return null;
-        if (age <= 0) return null;
+
+        if (firstName.isEmpty()) return null;
+        if (lastName.isEmpty()) return null;
+        if (ageString.isEmpty()) return null;
+
+        int age = Integer.parseInt(txtAge.getText().toString());
 
         Person newPerson = new Person();
 
@@ -285,7 +293,7 @@ public class CreatePersonFragment extends Fragment {
 
             return true;
         } catch (Exception exc) {
-            Log.e("TeamBuilder", "An error occured during updating person data. Details: " + exc.getMessage());
+            Log.e(getString(R.string.app_title), "An error occured during updating person data. Details: " + exc.getMessage());
             return false;
         }
     }
@@ -304,8 +312,29 @@ public class CreatePersonFragment extends Fragment {
                 }
             });
         } catch (Exception exc) {
-            Log.e("TeamBuilder", "Cannot delete row. Details: " + exc.getMessage());
+            Log.e(getString(R.string.app_title), "Cannot delete row. Details: " + exc.getMessage());
         }
+    }
+
+    // shows a standard dialog with "ok" button
+    private void showStandardDialog(String title, String message)
+    {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            builder = new AlertDialog.Builder(getActivity(), android.R.style.Theme_Material_Dialog_Alert);
+        else
+            builder = new AlertDialog.Builder(getActivity());
+
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.setIcon(android.R.drawable.ic_dialog_info)
+                .show();
     }
 
     private void showDeleteConfirmDialog(final Person currentPerson, final int eventId) {

@@ -35,6 +35,18 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
     }
 
     @Override
+    public void onBackPressed() {
+        final MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.frg_tag_main));
+        if (fragment != null)
+        {
+            //main fragment is our current fragment. disable back button
+            return;
+        }
+        else
+            super.onBackPressed();
+    }
+
+    @Override
     public void updateListAfterEventCreated(String eventName) {
         // a new event was created. open main fragment and show new item in list..
 
@@ -45,8 +57,7 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         args.putString(MainFragment.newEventCode, eventName);
         mainFragment.setArguments(args);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.llyt_container, mainFragment).addToBackStack(null).commit();
+        createTransactionAndReplaceFragment(mainFragment, getString(R.string.frg_tag_main));
     }
 
     @Override
@@ -57,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         args.putInt("eventId", eventId);
         eventDetailFragment.setArguments(args);
 
-        createTransactionAndReplaceFragment(eventDetailFragment);
+        createTransactionAndReplaceFragment(eventDetailFragment, getString(R.string.frg_tag_event_detail));
     }
 
     @Override
@@ -67,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         args.putInt("eventId", eventId);
         createPersonFragment.setArguments(args);
 
-        createTransactionAndReplaceFragment(createPersonFragment);
+        createTransactionAndReplaceFragment(createPersonFragment, getString(R.string.frg_tag_create_person));
 
     }
 
@@ -79,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         args.putInt("eventId", eventId);
         personDetailViewFragment.setArguments(args);
 
-        createTransactionAndReplaceFragment(personDetailViewFragment);
+        createTransactionAndReplaceFragment(personDetailViewFragment, getString(R.string.frg_tag_person_detail));
     }
 
     @Override
@@ -90,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         args.putInt("eventId", eventId);
         resultFragment.setArguments(args);
 
-        createTransactionAndReplaceFragment(resultFragment);
+        createTransactionAndReplaceFragment(resultFragment, getString(R.string.frg_tag_team_result));
 
     }
 
@@ -103,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         args.putInt(getString(R.string.statuscode), REQUESTCODE_MEMBER_CREATED);
         eventDetailFragment.setArguments(args);
 
-        createTransactionAndReplaceFragment(eventDetailFragment);
+        createTransactionAndReplaceFragment(eventDetailFragment,  getString(R.string.frg_tag_event_detail));
     }
 
     @Override
@@ -115,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         args.putInt(getString(R.string.statuscode), REQUESTCODE_MEMBER_EDITED);
         eventDetailFragment.setArguments(args);
 
-        createTransactionAndReplaceFragment(eventDetailFragment);
+        createTransactionAndReplaceFragment(eventDetailFragment,  getString(R.string.frg_tag_event_detail));
 
     }
 
@@ -128,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         args.putInt(getString(R.string.statuscode), REQUESTCODE_MEMBER_DELETED);
         eventDetailFragment.setArguments(args);
 
-        createTransactionAndReplaceFragment(eventDetailFragment);
+        createTransactionAndReplaceFragment(eventDetailFragment, getString(R.string.frg_tag_event_detail));
 
     }
 
@@ -137,12 +148,12 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         // called after user wants to close team result view. simply opens main fragment view.
         MainFragment mainFragment = new MainFragment();
 
-        createTransactionAndReplaceFragment(mainFragment);
+        createTransactionAndReplaceFragment(mainFragment,  getString(R.string.frg_tag_main));
     }
 
-    private void createTransactionAndReplaceFragment(Fragment currentFragment) {
+    private void createTransactionAndReplaceFragment(Fragment currentFragment, String fragmentTAG) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.llyt_container, currentFragment).addToBackStack(null).commit();
+        transaction.replace(R.id.llyt_container, currentFragment,fragmentTAG).addToBackStack(null).commit();
     }
 }
 

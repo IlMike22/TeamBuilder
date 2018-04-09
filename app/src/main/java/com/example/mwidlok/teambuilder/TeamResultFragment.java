@@ -66,7 +66,7 @@ public class TeamResultFragment extends Fragment {
         if (bundle != null) {
             eventId = bundle.getInt("eventId", -1);
         } else {
-            Log.e("TeamBuilder", getString(R.string.teamresult_error_bundle_null));
+            Log.e(getString(R.string.app_title), getString(R.string.teamresult_error_bundle_null));
             return;
         }
 
@@ -80,7 +80,7 @@ public class TeamResultFragment extends Fragment {
 
         for (Person p : personList) {
             teamMembers.add(p);
-            Log.i("TeamBuilder", "Here is Person " + p.getFirstName() + " " + p.getLastName());
+            Log.i(getString(R.string.app_title), "Here is Person " + p.getFirstName() + " " + p.getLastName());
         }
 
         ArrayList<ArrayList<Person>> result = generateTeams(teamMembers, eventId);
@@ -103,8 +103,8 @@ public class TeamResultFragment extends Fragment {
                 }
             }
         } catch (Exception exc) {
-            Log.e("TeamBuilder", "An error accured while putting out information about the team members.");
-            Log.e("TeamBuilder", "Details: " + exc.getMessage());
+            Log.e(getString(R.string.app_title), "An error accured while putting out information about the team members.");
+            Log.e(getString(R.string.app_title), "Details: " + exc.getMessage());
         }
 
         try {
@@ -115,8 +115,8 @@ public class TeamResultFragment extends Fragment {
                 }
             }
         } catch (Exception exc) {
-            Log.e("TeamBuilder", "An error accured while putting out the info about the team memabers.");
-            Log.e("TeamBuilder", "Details: " + exc.getMessage());
+            Log.e(getString(R.string.app_title), "An error accured while putting out the info about the team memabers.");
+            Log.e(getString(R.string.app_title), "Details: " + exc.getMessage());
         }
 
         if (tvResult1 != null)
@@ -135,7 +135,7 @@ public class TeamResultFragment extends Fragment {
 
         BusinessLogic bl = new BusinessLogic();
         ArrayList<ArrayList<Person>> result = bl.createTeams(personList);
-        Log.i("TeamBuilder", "Teams were successfully generated.");
+        Log.i(getString(R.string.app_title), "Teams were successfully generated.");
         //todo Logik überarbeiten und Validieren
         return result;
     }

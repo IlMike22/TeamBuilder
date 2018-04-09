@@ -8,7 +8,7 @@
     </string-array>
     <string name="drawerOpen">Drawer open</string>
     <string name="drawerClose">Drawer close</string>
-    <string name="btnGenerateTeams">Teams generieren</string>
+    <string name="btnGenerateTeams">Generate teams</string>
 
     <!--create person activity-->
     <string name="btn_create_text">Create member</string>
@@ -28,11 +28,12 @@
 
     <!--Bundle Keys-->
     <string name="statuscode">statusCode</string>
+    <string name="resultview_result_text">TeamBuilder Result</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello main fragment</string>
-    <string name="team_result_persons_in_team1">Folgende Personen sind in Team 1:</string>
-    <string name="team_result_persons_in_team2">Folgende Personen sind in Team 2:</string>
+    <string name="team_result_persons_in_team1">The following persons are in team 1:</string>
+    <string name="team_result_persons_in_team2">The following persons are in team 2:</string>
     <string name="msg_not_enough_persons_title">Not enough persons</string>
     <string name="msg_not_enough_persons_detail">You must have at least 4 persons created to generate two teams.</string>
     <string name="teamresult_error_bundle_null">The bundle is null. Cannot read event id for creating team result.</string>
@@ -41,5 +42,12 @@
     <string name="eventDetail_person_deleted_msg">Person successfully deleted.</string>
     <string name="eventDetail_person_edited_msg">Person successfully edited.</string>
     <string name="eventDetail_person_created_msg">Person successfully created.</string>
-    <string name="create_person_update_btn">aktualisieren</string>
+    <string name="create_person_update_btn">update</string>
+    <string name="create_person_data_needed_msg">Please type in the requested data before saving this person.</string>
+    <string name="app_title">TeamBuilder</string>
+    <string name="frg_tag_main">MAIN_FRAGMENT</string>
+    <string name="frg_tag_event_detail">EVENT_DETAIL_FRAGMENT</string>
+    <string name="frg_tag_team_result">TEAM_RESULT_FRAGMENT</string>
+    <string name="frg_tag_person_detail">PERSON_DETAIL_FRAGMENT</string>
+    <string name="frg_tag_create_person">CREATE_PERSON_FRAGMENT</string>
 </resources>
