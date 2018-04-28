@@ -1,5 +1,6 @@
 package com.example.mwidlok.teambuilder;
 
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +16,7 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         TeamResultFragment.TeamResultListener
 
 {
+    String TAG = "TeamBuilder";
     private final int REQUESTCODE_MEMBER_CREATED = 100;
     private final int REQUESTCODE_MEMBER_EDITED = 101;
     private final int REQUESTCODE_MEMBER_DELETED = 102;
@@ -22,11 +24,11 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         Fragment mainFragment = new MainFragment();
-        //todo open new fragment, not new activity. use fragment manager
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.llyt_container, mainFragment, "com.example.mwidlok.teambuilder.MainFragment");
@@ -34,23 +36,36 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         fragmentTransaction.commit();
     }
 
-    @Override
-    public void onBackPressed() {
-        final MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.frg_tag_main));
-        if (fragment != null)
-        {
-            //main fragment is our current fragment. disable back button
-            return;
-        }
-        else
-            super.onBackPressed();
-    }
+//    @Override
+//    public void onBackPressed() {
+//
+//
+//        //todo maybe this is not needed. addtobackstack should save the last fragment and should open it when user clicks back button
+//        // todo for create new person the back button click already works but other views dont react by pressing the back button :(
+//        Fragment currentFrag = getSupportFragmentManager().findFragmentById(R.id.llyt_container);
+//        if (currentFrag instanceof MainFragment)
+//        {
+//            //main fragment is our current fragment. disable back button
+//            return;
+//        }
+//        else if (currentFrag instanceof CreatePersonFragment)
+//        {
+//            Log.i(TAG,"Event Detail Fragment now open");
+//            //createTransactionAndReplaceFragment(eventDetailFragment, getString(R.string.frg_tag_event_detail))
+//            super.onBackPressed();
+//        }
+//
+//        else if (currentFrag instanceof EventDetailFragment)
+//        {
+//            Log.i(TAG,"open Event List Fragment now");
+//        }
+//    }
 
     @Override
     public void updateListAfterEventCreated(String eventName) {
         // a new event was created. open main fragment and show new item in list..
 
-        Log.i("TeamBuilder", "New event called " + eventName);
+        Log.i(TAG, "New event called " + eventName);
 
         MainFragment mainFragment = new MainFragment();
         Bundle args = new Bundle();

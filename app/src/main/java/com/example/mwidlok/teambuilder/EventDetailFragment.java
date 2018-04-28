@@ -13,13 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mwidlok.teambuilder.Adapters.RvTeamListAdapter;
 import com.example.mwidlok.teambuilder.Model.Person;
-
 import java.util.ArrayList;
-
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -29,6 +28,7 @@ import io.realm.RealmResults;
  */
 public class EventDetailFragment extends Fragment {
 
+    String TAG = "TeamBuilder";
     OnEventClickedForDetailViewListener mCallback;
 
     public interface OnEventClickedForDetailViewListener {
@@ -47,6 +47,7 @@ public class EventDetailFragment extends Fragment {
     RecyclerView rvTeamView;
     RvTeamListAdapter teamListAdapter;
     Button btnGenerateTeams;
+    TextView tvNoEventMembersInfo;
 
     // Request Codes
     private final int REQUESTCODE_MEMBER_CREATED = 100;
@@ -63,7 +64,7 @@ public class EventDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         mCallback = (MainActivity) getActivity();
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_team_list_overview, container, false);
+        return inflater.inflate(R.layout.fragment_event_detail, container, false);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class EventDetailFragment extends Fragment {
 
         fabNewTeamMember = (FloatingActionButton) view.findViewById(R.id.fabnewTeamMember);
         btnGenerateTeams = (Button) view.findViewById(R.id.btnGenerateTeams);
-
+        tvNoEventMembersInfo = (TextView) view.findViewById(R.id.tvNoEventMemberInfo);
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -89,16 +90,39 @@ public class EventDetailFragment extends Fragment {
             eventId = -1;
 
         if (eventId < 0) {
-            Log.e("Error", "Team Id not found.");
+            Log.e(TAG, "Event Id not found.");
             return;
         }
 
         Realm myDb = RealmHelper.getRealmInstance();
         RealmResults<Person> allPersons = myDb.where(Person.class).equalTo("teamId", eventId).findAll();
 
+        if (allPersons.size() == 0)
+        {
+            // at the moment we dont have any event members
+            if (tvNoEventMembersInfo != null)
+            {
+                tvNoEventMembersInfo.setVisibility(View.VISIBLE);
+                tvNoEventMembersInfo.setText("At the moment there are no event members created.");
+            }
+            else
+                Log.e(TAG, "Element tvNoEventMembersInfo is null.");
+
+        }
+        else
+        {
+            if (tvNoEventMembersInfo != null)
+                tvNoEventMembersInfo.setVisibility(View.GONE);
+            else
+                Log.e(TAG, "Element tvNoEventMembersInfo is null.");
+        }
+
+
         for (Person p : allPersons) {
             dataSet.add(p);
         }
+
+
 
         rvTeamView = (RecyclerView) view.findViewById(R.id.rvTeam);
         rvTeamView.setHasFixedSize(true);
@@ -128,7 +152,7 @@ public class EventDetailFragment extends Fragment {
                 if (mCallback != null)
                     mCallback.openNewPersonView(eventId);
                 else
-                    Log.e("TeamBuilder", "mCallback is null. Cannot open newPersonView.");
+                    Log.e(TAG, "mCallback is null. Cannot open newPersonView.");
             }
         });
 
@@ -143,7 +167,7 @@ public class EventDetailFragment extends Fragment {
                     if (mCallback != null)
                         mCallback.openTeamResultView(eventId);
                     else
-                        Log.e("TeamBuilder", "mCallback is null. Cannot open TeamResultView()");
+                        Log.e(TAG, "mCallback is null. Cannot open TeamResultView()");
                 }
             }
         });
@@ -166,6 +190,6 @@ public class EventDetailFragment extends Fragment {
         if (teamListAdapter != null)
             teamListAdapter.notifyDataSetChanged();
         else
-            Log.e("TeamBuilder", "Cannot update member list adapter. Adapter is null.");
+            Log.e(TAG, "Cannot update member list adapter. Adapter is null.");
     }
 }

@@ -20,6 +20,7 @@ import io.realm.Realm;
 public class CreateEventFragment extends Fragment {
 
     OnEventCreatedListener mCallback;
+    String TAG = "TeamBuilder";
 
     public interface OnEventCreatedListener
     {
@@ -58,10 +59,8 @@ public class CreateEventFragment extends Fragment {
                 String eventName = txtEventName.getText().toString();
 
                 if (eventName.isEmpty())
-                {
-                    Toast errorToast = Toast.makeText(getContext(), "Please define a name for event", Toast.LENGTH_SHORT);
-                    errorToast.show();
-                }
+                    Toast.makeText(getContext(), "Please define a name for event", Toast.LENGTH_SHORT).show();
+
                 else
                 {
                     // now take user input and go back to main site with current adapter and list.
@@ -77,8 +76,8 @@ public class CreateEventFragment extends Fragment {
                     myDb.commitTransaction();
                     myDb.close();
 
-                    Log.i("TeamBuilder","Realm: New team dataset named " + newTeam.getName() + " was saved in db.");
-                    Log.i("TeamBuilder","Now close NewTeamActivity and go back to overview.");
+                    Log.i(TAG,"Realm: New team dataset named " + newTeam.getName() + " was saved in db.");
+                    Log.i(TAG,"Now close NewTeamActivity and go back to overview.");
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("result",eventName);
                     mCallback = (OnEventCreatedListener) getActivity();

@@ -30,6 +30,8 @@ import io.realm.RealmResults;
  */
 public class MainFragment extends Fragment {
 
+    String TAG = "TeamBuilder";
+    boolean isFirstRun = false;
     Activity activity = getActivity();
     private List<String> dataSet = new ArrayList<String>();
     private FloatingActionButton fab;
@@ -80,30 +82,17 @@ public class MainFragment extends Fragment {
         mAdapter = new RvEventsAdapter(dataSet);
         mRecyclerView.setAdapter(mAdapter);
 
-        Realm myDb = getRealmInstance();
-        Log.i("TeamBuilder", "Realm: Reading all persons from db..");
-
-        RealmResults<Team> allTeams = myDb.where(Team.class).findAll();
-
-        for (Team currentTeam : allTeams) {
-            Log.i("TeamBuilder", "Realm: Found a team dataset named " + currentTeam.getName());
-            dataSet.add(currentTeam.getName());
-        }
-
-        // retrieve data
-
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            String eventName = bundle.getString(newEventCode, null);
-            if (eventName != null) {
-                //todo: a new event was created. add this event to list and make it clickable.
-                Log.i("TeamBuilder", "New event retrieved named " + eventName);
-                dataSet.add(eventName);
-                mAdapter.notifyDataSetChanged();
+        if (!isFirstRun)
+        {
+            isFirstRun = true;
+            Realm myDb = getRealmInstance();
+            Log.i(TAG, "Realm: Reading all events from db..");
+            RealmResults<Team> allEvents = myDb.where(Team.class).findAll();
+            for (Team currentTeam : allEvents) {
+                Log.i(TAG, "Realm: Found a team dataset named " + currentTeam.getName());
+                dataSet.add(currentTeam.getName());
             }
-
         }
-
     }
 
     private Realm getRealmInstance() {
@@ -116,18 +105,5 @@ public class MainFragment extends Fragment {
 
         return Realm.getInstance(realmConfig);
     }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == REQUEST_CODE_EVENT_NAME_SET) {
-//            String result;
-//            if (data != null) {
-//                result = data.getStringExtra("result");
-//                dataSet.add(result);
-//                mAdapter.notifyDataSetChanged();
-//            }
-//        }
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
 
 }
