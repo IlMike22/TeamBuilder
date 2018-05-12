@@ -15,6 +15,7 @@ public class BusinessLogic {
     private static int FACTOR_PROFI = 3;
     private static int FACTOR_AVERAGE = 2;
     private static int FACTOR_AMATEUR = 1;
+    private static String TAG = "TeamBuilder";
 
     public ArrayList<ArrayList<Person>> createTeams(ArrayList<Person> persons)
     {
@@ -33,23 +34,23 @@ public class BusinessLogic {
         {
             switch (person.getSkillLevel())
             {
-                case 2:
-                        profis.add(person);
-                        Log.i("TeamBuilder","Array Profis gets Person " +person.getFirstName());
-                        break;
+                case 0:
+                    amateurs.add(person);
+                    Log.i(TAG,"Array Amateur gets Person " +person.getFirstName());
+                    break;
 
                 case 1:
                     averages.add(person);
-                    Log.i("TeamBuilder","Array Average gets Person " +person.getFirstName());
+                    Log.i(TAG,"Array Average gets Person " +person.getFirstName());
                     break;
 
-                case 0:
-                    amateurs.add(person);
-                    Log.i("TeamBuilder","Array Amateur gets Person " +person.getFirstName());
-                    break;
+                case 2:
+                        profis.add(person);
+                        Log.i(TAG,"Array Profis gets Person " +person.getFirstName());
+                        break;
 
                 default:
-                    Log.e("TeamBuilder","Invalid skill level detected.");
+                    Log.e(TAG,"Invalid skill level detected.");
                     break;
             }
         }

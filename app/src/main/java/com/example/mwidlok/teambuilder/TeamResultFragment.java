@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.mwidlok.teambuilder.Model.Person;
 
@@ -50,7 +49,7 @@ public class TeamResultFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mCallback = (MainActivity) getActivity();
-        // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_team_result, container, false);
     }
 
@@ -70,6 +69,13 @@ public class TeamResultFragment extends Fragment {
             return;
         }
 
+        btnComplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCallback.onResultViewFinished();
+            }
+        });
+
         ArrayList<Person> teamMembers = new ArrayList<>();
 
         Realm myDb = RealmHelper.getRealmInstance();
@@ -83,60 +89,68 @@ public class TeamResultFragment extends Fragment {
             Log.i(getString(R.string.app_title), "Here is Person " + p.getFirstName() + " " + p.getLastName());
         }
 
-        ArrayList<ArrayList<Person>> result = generateTeams(teamMembers, eventId);
-
-        String result1Output = getString(R.string.team_result_persons_in_team1);
-        String result2Output = getString(R.string.team_result_persons_in_team2);
-
-        btnComplete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCallback.onResultViewFinished();
-            }
-        });
-
-        try {
-            for (Person person : result.get(0)) {
-                result1Output += person.getFirstName() + " " + person.getLastName();
-                if (result.get(0).indexOf(person) != result.get(0).size() - 1) {
-                    result1Output += ", ";
-                }
-            }
-        } catch (Exception exc) {
-            Log.e(getString(R.string.app_title), "An error accured while putting out information about the team members.");
-            Log.e(getString(R.string.app_title), "Details: " + exc.getMessage());
-        }
-
-        try {
-            for (Person person : result.get(1)) {
-                result2Output += person.getFirstName() + " " + person.getLastName();
-                if (result.get(1).indexOf(person) != result.get(1).size() - 1) {
-                    result2Output += ", ";
-                }
-            }
-        } catch (Exception exc) {
-            Log.e(getString(R.string.app_title), "An error accured while putting out the info about the team memabers.");
-            Log.e(getString(R.string.app_title), "Details: " + exc.getMessage());
-        }
-
-        if (tvResult1 != null)
-            tvResult1.setText(result1Output);
-        if (tvResult2 != null)
-            tvResult2.setText(result2Output);
+        printResult(generateTeams(teamMembers));
     }
 
-    private ArrayList<ArrayList<Person>> generateTeams(ArrayList<Person> personList, int teamId) {
-
-        // first of all we must have enough (>= 4 member) to build two teams
-        if (personList.size() < 4) {
-            Toast.makeText(getActivity().getApplicationContext(), R.string.teamresult_error_not_enough_members, Toast.LENGTH_SHORT).show();
-            return null;
-        }
+    private ArrayList<ArrayList<Person>> generateTeams(ArrayList<Person> personList) {
 
         BusinessLogic bl = new BusinessLogic();
         ArrayList<ArrayList<Person>> result = bl.createTeams(personList);
         Log.i(getString(R.string.app_title), "Teams were successfully generated.");
-        //todo Logik überarbeiten und Validieren
         return result;
+    }
+
+    private void printResult(ArrayList<ArrayList<Person>> result) {
+
+        String result1Output = "";
+        String result2Output = "";
+        String profiOutput = "Profis\n";
+        String averageOutput = "Averages:\n";
+        String amateurOutput = "Amateurs:\n";
+
+        ArrayList<Person> team1 = result.get(0);
+        ArrayList<Person> team2 = result.get(0);
+
+        for (Person p : team1) {
+            switch (p.getSkillLevel()) {
+                case 0:
+                    profiOutput += " - " + p.getFirstName() + " " + p.getLastName() + "\n";
+                    break;
+                case 1:
+                    averageOutput += " - " + p.getFirstName() + " " + p.getLastName() + "\n";
+                    break;
+                case 2:
+                    amateurOutput += " - " + p.getFirstName() + " " + p.getLastName() + "\n";
+                    break;
+            }
+        }
+
+            result1Output = "Team 1 has the following members\n\n" + profiOutput + "\n" + averageOutput + "\n" + amateurOutput + "\n";
+
+            profiOutput = "Profis:\n";
+            averageOutput = "Averages:\n";
+            amateurOutput = "Amateurs:\n";
+
+            for (Person p2 : team2) {
+                switch (p2.getSkillLevel()) {
+                    case 0:
+                        profiOutput += " - " + p2.getFirstName() + " " + p2.getLastName() + "\n";
+                        break;
+                    case 1:
+                        averageOutput += " - " + p2.getFirstName() + " " + p2.getLastName() + "\n";
+                        break;
+                    case 2:
+                        amateurOutput += " - " + p2.getFirstName() + " " + p2.getLastName() + "\n";
+                        break;
+                }
+
+                result2Output = "Team 2 has the following members\n\n" + profiOutput + "\n" + averageOutput + "\n" + amateurOutput + "\n";
+
+            }
+
+            if (tvResult1 != null)
+                tvResult1.setText(result1Output);
+            if (tvResult2 != null)
+                tvResult2.setText(result2Output);
     }
 }

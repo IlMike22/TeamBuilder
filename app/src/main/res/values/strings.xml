@@ -32,8 +32,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello main fragment</string>
-    <string name="team_result_persons_in_team1">The following persons are in team 1:</string>
-    <string name="team_result_persons_in_team2">The following persons are in team 2:</string>
+    <string name="team_result_persons_in_team1">Team 1:\n</string>
+    <string name="team_result_persons_in_team2">Team 2:\n</string>
     <string name="msg_not_enough_persons_title">Not enough persons</string>
     <string name="msg_not_enough_persons_detail">You must have at least 4 persons created to generate two teams.</string>
     <string name="teamresult_error_bundle_null">The bundle is null. Cannot read event id for creating team result.</string>

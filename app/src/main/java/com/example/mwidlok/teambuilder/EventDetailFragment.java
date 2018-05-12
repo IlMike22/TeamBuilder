@@ -159,7 +159,7 @@ public class EventDetailFragment extends Fragment {
         btnGenerateTeams.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (dataSet.size() < 2) {
+                if (dataSet.size() < 4) {
                     // todo after dialog button ok click the app must not be closed. fix this issue
                         DialogHelper.showStandardDialog(getString(R.string.msg_not_enough_persons_title), getString(R.string.msg_not_enough_persons_detail), false, getActivity(), 0);
                     //Toast.makeText(getActivity().getApplicationContext(), R.string.eventDetail_error_not_enough_members, Toast.LENGTH_SHORT).show();
