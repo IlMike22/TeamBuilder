@@ -1,12 +1,17 @@
 package com.example.mwidlok.teambuilder;
 
-import android.nfc.Tag;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.example.mwidlok.teambuilder.Model.Person;
 
@@ -17,6 +22,9 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
 
 {
     String TAG = "TeamBuilder";
+    private DrawerLayout mDrawerLayout;
+    private Toolbar toolbar;
+
     private final int REQUESTCODE_MEMBER_CREATED = 100;
     private final int REQUESTCODE_MEMBER_EDITED = 101;
     private final int REQUESTCODE_MEMBER_DELETED = 102;
@@ -27,6 +35,27 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        NavigationView navView = (NavigationView) findViewById(R.id.navView);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        // setting toolbar instead of standard actionbar for drawer
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar =  getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                item.setChecked(true);
+                mDrawerLayout.closeDrawers();
+                return false;
+            }
+        });
+
 
         Fragment mainFragment = new MainFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();

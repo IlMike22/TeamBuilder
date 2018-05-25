@@ -50,4 +50,6 @@
     <string name="frg_tag_team_result">TEAM_RESULT_FRAGMENT</string>
     <string name="frg_tag_person_detail">PERSON_DETAIL_FRAGMENT</string>
     <string name="frg_tag_create_person">CREATE_PERSON_FRAGMENT</string>
+    <string name="navItemTitle_settings">Settings</string>
+    <string name="navItemTitle_about">About</string>
 </resources>

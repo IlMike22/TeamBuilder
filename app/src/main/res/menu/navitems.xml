@@ -2,5 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
+        <item android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/navItemTitle_settings"
+            />
+        <item android:id="@+id/nav_about"
+            android:icon="@drawable/ic_menu_send"
+            android:title="@string/navItemTitle_about"/>
     </group>
 </menu>
