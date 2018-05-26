@@ -26,18 +26,19 @@ import io.realm.RealmResults;
  */
 
 
+
 public class TeamResultFragment extends Fragment {
 
-    TextView tvResult1;
-    TextView tvResult2;
-    Button btnComplete;
-    int eventId = -1;
-
-    TeamResultListener mCallback;
+    private TextView tvResult1;
+    private TextView tvResult2;
+    private Button btnComplete;
+    private int eventId = -1;
 
     interface TeamResultListener {
         void onResultViewFinished();
     }
+
+    private TeamResultListener mCallback;
 
 
     public TeamResultFragment() {
@@ -80,7 +81,7 @@ public class TeamResultFragment extends Fragment {
 
         Realm myDb = RealmHelper.getRealmInstance();
         RealmResults<Person> allPersons = myDb.where(Person.class).equalTo("teamId", eventId).findAll();
-        RealmList<Person> realmList = new RealmList<Person>();
+        RealmList<Person> realmList = new RealmList<>();
         realmList.addAll(allPersons.subList(0, allPersons.size()));
         List<Person> personList = myDb.copyFromRealm(allPersons);
 
@@ -102,7 +103,7 @@ public class TeamResultFragment extends Fragment {
 
     private void printResult(ArrayList<ArrayList<Person>> result) {
 
-        String result1Output = "";
+        String result1Output;
         String result2Output = "";
         String profiOutput = "Profis\n";
         String averageOutput = "Averages:\n";

@@ -9,12 +9,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.mwidlok.teambuilder.EventDetailFragment;
 import com.example.mwidlok.teambuilder.MainActivity;
 import com.example.mwidlok.teambuilder.Model.Person;
 import com.example.mwidlok.teambuilder.R;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,13 +20,12 @@ import java.util.List;
 
 public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.ViewHolder> {
 
-    private List<Person> mDataSet = new ArrayList<>();
-    EventDetailFragment.OnEventClickedForDetailViewListener mCallback;
+    final private List<Person> mDataSet;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public LinearLayout llMemberCardView;
+        final private LinearLayout llMemberCardView;
 
-        public ViewHolder(LinearLayout llCardView) {
+        private ViewHolder(LinearLayout llCardView) {
             super(llCardView);
             llMemberCardView = llCardView;
         }
@@ -43,8 +39,7 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         LinearLayout llCardView = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.member_cardview_item, parent, false);
-        ViewHolder viewHolder = new ViewHolder(llCardView);
-        return viewHolder;
+        return new ViewHolder(llCardView);
     }
 
     @Override
@@ -72,7 +67,7 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
                 }
             });
         } else {
-            tvName.setText("This dataset is invalid.");
+            tvName.setText(R.string.error_msg_invalid_data);
         }
     }
 
@@ -83,15 +78,5 @@ public class RvTeamListAdapter extends RecyclerView.Adapter<RvTeamListAdapter.Vi
 
     private void showPersonDetailFragment(Context context, Person currentPerson, int eventId) {
         ((MainActivity) context).openPersonDetailView(currentPerson, eventId);
-        // opens person detail view for showing and editing current clicked person in list.
-        // todo open new fragment, not new activity. use fragment manager
-        //mCallback = (EventDetailFragment.OnEventClickedForDetailViewListener) ((MainActivity) c;
-
-
-//        Intent i = new Intent(context, CreatePersonActivity.class);
-//        i.putExtra("currentPersonId", id);
-//        i.putExtra("teamId", teamId);
-//        ((TeamListActivity) context).startActivityForResult(i, 100);
-
     }
 }

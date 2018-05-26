@@ -6,6 +6,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,16 +19,12 @@ import com.example.mwidlok.teambuilder.Model.Person;
 public class MainActivity extends AppCompatActivity implements CreateEventFragment.OnEventCreatedListener,
         EventDetailFragment.OnEventClickedForDetailViewListener,
         CreatePersonFragment.CreateNewPersonListener,
-        TeamResultFragment.TeamResultListener
+        TeamResultFragment.TeamResultListener,
+        ImpressumFragment.OnImpressumClickedListener
 
 {
-    String TAG = "TeamBuilder";
+    final private String TAG = "TeamBuilder";
     private DrawerLayout mDrawerLayout;
-    private Toolbar toolbar;
-
-    private final int REQUESTCODE_MEMBER_CREATED = 100;
-    private final int REQUESTCODE_MEMBER_EDITED = 101;
-    private final int REQUESTCODE_MEMBER_DELETED = 102;
 
 
     @Override
@@ -38,20 +35,30 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         NavigationView navView = (NavigationView) findViewById(R.id.navView);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         // setting toolbar instead of standard actionbar for drawer
         setSupportActionBar(toolbar);
 
         ActionBar actionBar =  getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        if (actionBar != null)
+        {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        }
 
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 item.setChecked(true);
                 mDrawerLayout.closeDrawers();
+
+                switch(item.getItemId())
+                {
+                    case R.id.nav_about:
+                        openImpressumView();
+                        break;
+                }
                 return false;
             }
         });
@@ -65,30 +72,17 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         fragmentTransaction.commit();
     }
 
-//    @Override
-//    public void onBackPressed() {
-//
-//
-//        //todo maybe this is not needed. addtobackstack should save the last fragment and should open it when user clicks back button
-//        // todo for create new person the back button click already works but other views dont react by pressing the back button :(
-//        Fragment currentFrag = getSupportFragmentManager().findFragmentById(R.id.llyt_container);
-//        if (currentFrag instanceof MainFragment)
-//        {
-//            //main fragment is our current fragment. disable back button
-//            return;
-//        }
-//        else if (currentFrag instanceof CreatePersonFragment)
-//        {
-//            Log.i(TAG,"Event Detail Fragment now open");
-//            //createTransactionAndReplaceFragment(eventDetailFragment, getString(R.string.frg_tag_event_detail))
-//            super.onBackPressed();
-//        }
-//
-//        else if (currentFrag instanceof EventDetailFragment)
-//        {
-//            Log.i(TAG,"open Event List Fragment now");
-//        }
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId())
+        {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void updateListAfterEventCreated(String eventName) {
@@ -146,6 +140,12 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         resultFragment.setArguments(args);
 
         createTransactionAndReplaceFragment(resultFragment, getString(R.string.frg_tag_team_result));
+    }
+
+    @Override
+    public void openImpressumView() {
+        ImpressumFragment impFragment = new ImpressumFragment();
+        createTransactionAndReplaceFragment(impFragment, "IMPRESSUM_FRAGMENT");
 
     }
 
@@ -155,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         Bundle args = new Bundle();
         args.putSerializable("newPerson", newPerson);
         args.putInt("eventId", eventId);
+        int REQUESTCODE_MEMBER_CREATED = 100;
         args.putInt(getString(R.string.statuscode), REQUESTCODE_MEMBER_CREATED);
         eventDetailFragment.setArguments(args);
 
@@ -167,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         EventDetailFragment eventDetailFragment = new EventDetailFragment();
         Bundle args = new Bundle();
         args.putInt("eventId", eventId);
+        int REQUESTCODE_MEMBER_EDITED = 101;
         args.putInt(getString(R.string.statuscode), REQUESTCODE_MEMBER_EDITED);
         eventDetailFragment.setArguments(args);
 
@@ -180,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
         EventDetailFragment eventDetailFragment = new EventDetailFragment();
         Bundle args = new Bundle();
         args.putInt("eventId", eventId);
+        int REQUESTCODE_MEMBER_DELETED = 102;
         args.putInt(getString(R.string.statuscode), REQUESTCODE_MEMBER_DELETED);
         eventDetailFragment.setArguments(args);
 

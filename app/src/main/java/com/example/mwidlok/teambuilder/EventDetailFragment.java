@@ -1,7 +1,6 @@
 package com.example.mwidlok.teambuilder;
 
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -28,8 +27,8 @@ import io.realm.RealmResults;
  */
 public class EventDetailFragment extends Fragment {
 
-    String TAG = "TeamBuilder";
-    OnEventClickedForDetailViewListener mCallback;
+    final private String TAG = "TeamBuilder";
+    private OnEventClickedForDetailViewListener mCallback;
 
     public interface OnEventClickedForDetailViewListener {
         void openEventDetailView(int eventId);
@@ -41,13 +40,8 @@ public class EventDetailFragment extends Fragment {
         void openTeamResultView(int eventId);
     }
 
-    private FloatingActionButton fabNewTeamMember;
-    public ArrayList<Person> dataSet = new ArrayList<>();
-    private RecyclerView.LayoutManager mLayoutManager;
-    RecyclerView rvTeamView;
-    RvTeamListAdapter teamListAdapter;
-    Button btnGenerateTeams;
-    TextView tvNoEventMembersInfo;
+    final private ArrayList<Person> dataSet = new ArrayList<>();
+    private RvTeamListAdapter teamListAdapter;
 
     // Request Codes
     private final int REQUESTCODE_MEMBER_CREATED = 100;
@@ -75,9 +69,9 @@ public class EventDetailFragment extends Fragment {
         int statusCode = 0;
 
 
-        fabNewTeamMember = (FloatingActionButton) view.findViewById(R.id.fabnewTeamMember);
-        btnGenerateTeams = (Button) view.findViewById(R.id.btnGenerateTeams);
-        tvNoEventMembersInfo = (TextView) view.findViewById(R.id.tvNoEventMemberInfo);
+        FloatingActionButton fabNewTeamMember = (FloatingActionButton) view.findViewById(R.id.fabnewTeamMember);
+        Button btnGenerateTeams = (Button) view.findViewById(R.id.btnGenerateTeams);
+        TextView tvNoEventMembersInfo = (TextView) view.findViewById(R.id.tvNoEventMemberInfo);
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -103,7 +97,7 @@ public class EventDetailFragment extends Fragment {
             if (tvNoEventMembersInfo != null)
             {
                 tvNoEventMembersInfo.setVisibility(View.VISIBLE);
-                tvNoEventMembersInfo.setText("At the moment there are no event members created.");
+                tvNoEventMembersInfo.setText(R.string.event_detail_msg_no_members);
             }
             else
                 Log.e(TAG, "Element tvNoEventMembersInfo is null.");
@@ -118,16 +112,12 @@ public class EventDetailFragment extends Fragment {
         }
 
 
-        for (Person p : allPersons) {
-            dataSet.add(p);
-        }
+        dataSet.addAll(allPersons);
 
-
-
-        rvTeamView = (RecyclerView) view.findViewById(R.id.rvTeam);
+        RecyclerView rvTeamView = (RecyclerView) view.findViewById(R.id.rvTeam);
         rvTeamView.setHasFixedSize(true);
 
-        mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         rvTeamView.setLayoutManager(mLayoutManager);
         teamListAdapter = new RvTeamListAdapter(dataSet);
         rvTeamView.setAdapter(teamListAdapter);
@@ -175,13 +165,20 @@ public class EventDetailFragment extends Fragment {
 
     private void showStatusInToast(int statusCode) {
         String message = "";
-        // show a toast when person was edited oder deleted.
-        if (statusCode == REQUESTCODE_DELETE_MEMBER)
-            message = getString(R.string.eventDetail_person_deleted_msg);
-        else if (statusCode == REQUESTCODE_MEMBER_EDITED)
-            message = getString(R.string.eventDetail_person_edited_msg);
-        else if (statusCode == REQUESTCODE_MEMBER_CREATED)
-            message = getString(R.string.eventDetail_person_created_msg);
+
+        switch(statusCode)
+        {
+            case REQUESTCODE_DELETE_MEMBER:
+                    message = getString(R.string.eventDetail_person_deleted_msg);
+                break;
+            case REQUESTCODE_MEMBER_CREATED:
+                message = getString(R.string.eventDetail_person_created_msg);
+                break;
+            case REQUESTCODE_MEMBER_EDITED:
+                message = getString(R.string.eventDetail_person_edited_msg);
+                break;
+        }
+
         Toast.makeText(getActivity(), message,
                 Toast.LENGTH_LONG).show();
     }

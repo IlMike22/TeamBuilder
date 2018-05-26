@@ -30,17 +30,11 @@ import io.realm.RealmResults;
  */
 public class MainFragment extends Fragment {
 
-    String TAG = "TeamBuilder";
-    boolean isFirstRun = false;
-    Activity activity = getActivity();
-    private List<String> dataSet = new ArrayList<String>();
-    private FloatingActionButton fab;
-    static final int REQUEST_CODE_EVENT_NAME_SET = 1;
+    private boolean isFirstRun = false;
+    final private Activity activity = getActivity();
+    final private List<String> dataSet = new ArrayList<>();
+    private static final int REQUEST_CODE_EVENT_NAME_SET = 1;
     static final String newEventCode = Integer.toString(REQUEST_CODE_EVENT_NAME_SET);
-
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     public MainFragment() {
         // Required empty public constructor
@@ -59,7 +53,7 @@ public class MainFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        fab = (FloatingActionButton) view.findViewById(R.id.fabNewEvent);
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabNewEvent);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,19 +67,20 @@ public class MainFragment extends Fragment {
             }
         });
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.rvEventsView);
+        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.rvEventsView);
         mRecyclerView.setHasFixedSize(true);
 
         // setting Layout Manager for Recycler View
-        mLayoutManager = new LinearLayoutManager(activity);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(activity);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new RvEventsAdapter(dataSet);
+        RecyclerView.Adapter mAdapter = new RvEventsAdapter(dataSet);
         mRecyclerView.setAdapter(mAdapter);
 
         if (!isFirstRun)
         {
             isFirstRun = true;
             Realm myDb = getRealmInstance();
+            String TAG = "TeamBuilder";
             Log.i(TAG, "Realm: Reading all events from db..");
             RealmResults<Team> allEvents = myDb.where(Team.class).findAll();
             for (Team currentTeam : allEvents) {
