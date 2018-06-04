@@ -55,4 +55,5 @@
     <string name="event_detail_msg_no_members">At the moment there are no event members created.</string>
     <string name="error_msg_invalid_data">This dataset is invalid.</string>
     <string name="result_btn_text_finish">Finish</string>
+    <string name="main_no_events_available_msg">At the moment there are no events created. Click on the button below to create one.</string>
 </resources>

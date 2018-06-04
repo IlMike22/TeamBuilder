@@ -31,8 +31,6 @@ public class TeamResultFragment extends Fragment {
 
     private TextView tvResult1;
     private TextView tvResult2;
-    private Button btnComplete;
-    private int eventId = -1;
 
     interface TeamResultListener {
         void onResultViewFinished();
@@ -60,9 +58,10 @@ public class TeamResultFragment extends Fragment {
 
         tvResult1 = (TextView) view.findViewById(R.id.tvResult1);
         tvResult2 = (TextView) view.findViewById(R.id.tvResult2);
-        btnComplete = (Button) view.findViewById(R.id.btnComplete);
+        Button btnComplete = (Button) view.findViewById(R.id.btnComplete);
 
         Bundle bundle = this.getArguments();
+        int eventId = -1;
         if (bundle != null) {
             eventId = bundle.getInt("eventId", -1);
         } else {
@@ -103,7 +102,7 @@ public class TeamResultFragment extends Fragment {
 
     private void printResult(ArrayList<ArrayList<Person>> result) {
 
-        String result1Output;
+        String result1Output = "";
         String result2Output = "";
         String profiOutput = "Profis\n";
         String averageOutput = "Averages:\n";
@@ -147,9 +146,22 @@ public class TeamResultFragment extends Fragment {
 
                 result2Output = "Team 2 has the following members\n\n" + profiOutput + "\n" + averageOutput + "\n" + amateurOutput + "\n";
 
+                for (Person p : team2) {
+                    switch (p.getSkillLevel()) {
+                        case 0:
+                            profiOutput += " - " + p.getFirstName() + " " + p.getLastName() + "\n";
+                            break;
+                        case 1:
+                            averageOutput += " - " + p.getFirstName() + " " + p.getLastName() + "\n";
+                            break;
+                        case 2:
+                            amateurOutput += " - " + p.getFirstName() + " " + p.getLastName() + "\n";
+                            break;
+                    }
+                }
             }
 
-            if (tvResult1 != null)
+            if (tvResult1 != null )
                 tvResult1.setText(result1Output);
             if (tvResult2 != null)
                 tvResult2.setText(result2Output);

@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.mwidlok.teambuilder.Adapters.RvEventsAdapter;
 import com.example.mwidlok.teambuilder.Model.Team;
@@ -54,6 +55,8 @@ public class MainFragment extends Fragment {
 
 
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabNewEvent);
+        TextView tvNoEventAvailable = (TextView) view.findViewById(R.id.tvNoEventsMsg);
+
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +91,12 @@ public class MainFragment extends Fragment {
                 dataSet.add(currentTeam.getName());
             }
         }
+
+        // checking if there is already at least one event created. if not, show message
+        if (dataSet.size() == 0)
+            tvNoEventAvailable.setVisibility(View.VISIBLE);
+        else
+            tvNoEventAvailable.setVisibility(View.GONE);
     }
 
     private Realm getRealmInstance() {

@@ -1,6 +1,7 @@
 package com.example.mwidlok.teambuilder;
 
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -150,9 +151,9 @@ public class EventDetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (dataSet.size() < 4) {
-                    // todo after dialog button ok click the app must not be closed. fix this issue
+                        // not enough persons created to generate a result.
                         DialogHelper.showStandardDialog(getString(R.string.msg_not_enough_persons_title), getString(R.string.msg_not_enough_persons_detail), false, getActivity(), 0);
-                    //Toast.makeText(getActivity().getApplicationContext(), R.string.eventDetail_error_not_enough_members, Toast.LENGTH_SHORT).show();
+
                 } else {
                     if (mCallback != null)
                         mCallback.openTeamResultView(eventId);

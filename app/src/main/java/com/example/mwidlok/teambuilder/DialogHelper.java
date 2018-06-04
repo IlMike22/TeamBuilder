@@ -35,9 +35,6 @@ public class DialogHelper {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Log.i("TeamBuilder","Ok clicked. Now turn back to overview.");
-                            if (resultCode != -1)
-                                currentActivity.setResult(resultCode);
-                            currentActivity.finish();
                         }
                     });
 
