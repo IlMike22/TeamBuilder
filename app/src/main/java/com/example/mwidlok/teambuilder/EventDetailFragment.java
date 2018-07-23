@@ -1,7 +1,6 @@
 package com.example.mwidlok.teambuilder;
 
 
-import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -18,7 +17,9 @@ import android.widget.Toast;
 
 import com.example.mwidlok.teambuilder.Adapters.RvTeamListAdapter;
 import com.example.mwidlok.teambuilder.Model.Person;
+
 import java.util.ArrayList;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 

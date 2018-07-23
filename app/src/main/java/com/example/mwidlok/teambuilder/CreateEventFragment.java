@@ -19,25 +19,19 @@ import io.realm.Realm;
 
 public class CreateEventFragment extends Fragment {
 
-    OnEventCreatedListener mCallback;
-    String TAG = "TeamBuilder";
+    private OnEventCreatedListener mCallback;
+    private final String TAG = "TeamBuilder";
 
     public interface OnEventCreatedListener
     {
         void updateListAfterEventCreated(String eventName);
     }
 
-    Button btnSaveEvent;
-    EditText txtEventName;
+    private Button btnSaveEvent;
+    private EditText txtEventName;
 
     public CreateEventFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
     }
 
     @Override

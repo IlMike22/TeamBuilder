@@ -40,17 +40,17 @@ public class CreatePersonFragment extends Fragment {
         // Required empty public constructor
     }
 
-    Button btnSaveMember;
-    Button btnDeleteMember;
-    EditText txtFirstName;
-    EditText txtName;
-    EditText txtAge;
-    Spinner spSkillLevel;
-    TextView tvPersonInfo;
+    private Button btnSaveMember;
+    private Button btnDeleteMember;
+    private EditText txtFirstName;
+    private EditText txtName;
+    private EditText txtAge;
+    private Spinner spSkillLevel;
+    private TextView tvPersonInfo;
 
     final Date currentDate = Calendar.getInstance().getTime();
 
-    CreateNewPersonListener mCallback;
+    private CreateNewPersonListener mCallback;
 
     interface CreateNewPersonListener {
         void onNewPersonCreated(Person newPerson, int eventId);
@@ -140,7 +140,7 @@ public class CreatePersonFragment extends Fragment {
                     //getting amount of persons that are already saved in db. so we can get the current id.
                     //getting also the amount of current team members. Therefore we catch all persons with current team id.
                     int counter = 0;
-                    ArrayList<Person> personList = new ArrayList<Person>(myDb.where(Person.class).findAll());
+                    ArrayList<Person> personList = new ArrayList<>(myDb.where(Person.class).findAll());
                     for (Person p : personList) {
                         if (p.getEventId() == eventId)
                             counter++;
@@ -220,7 +220,7 @@ public class CreatePersonFragment extends Fragment {
         return newPerson;
     }
 
-    private boolean getPersonInformationForEdit(final Person currentPerson, final int eventId) {
+    private void getPersonInformationForEdit(final Person currentPerson, final int eventId) {
 
         try {
             //final Person person = RealmHelper.getRealmInstance().where(Person.class).equalTo("id",personId).findFirst();
@@ -230,7 +230,7 @@ public class CreatePersonFragment extends Fragment {
             spSkillLevel.setSelection(currentPerson.getSkillLevel());
 
             String personInfo = "";
-            String formattedDate = "";
+            String formattedDate;
             tvPersonInfo.setVisibility(View.VISIBLE);
             if (currentPerson.getCreateDate() != null) {
                 formattedDate = (String) DateFormat.format("EEEE, dd.MM.yyyy, HH:mm:ss", currentPerson.getCreateDate());
@@ -263,10 +263,8 @@ public class CreatePersonFragment extends Fragment {
                 }
             });
 
-            return true;
         } catch (Exception exc) {
             Log.e("TeamBuilder", "Unfortunately reading out the desired person failed. Details: " + exc.getMessage());
-            return false;
         }
     }
 
@@ -298,12 +296,20 @@ public class CreatePersonFragment extends Fragment {
         }
     }
 
-    public void deletePerson(final int id) {
+    private void deletePerson(final int id) {
         try {
             Realm realmDb = RealmHelper.getRealmInstance();
             realmDb.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
+
+                    if (realm == null)
+                    {
+                        Log.e("TeamBuilder","Cannot delete data. Realm reference is null");
+                        return;
+                    }
+
+
                     RealmResults<Person> result = realm.where(Person.class).equalTo("id", id).findAll();
                     if (result.deleteAllFromRealm())
                         Log.i("TeamBuilder", "Row was successfully deleted.");

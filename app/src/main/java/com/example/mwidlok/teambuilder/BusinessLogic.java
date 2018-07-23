@@ -1,9 +1,9 @@
 package com.example.mwidlok.teambuilder;
 
 import android.util.Log;
+
 import com.example.mwidlok.teambuilder.Model.Person;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -12,23 +12,23 @@ import java.util.ArrayList;
 
 public class BusinessLogic {
 
-    private static int FACTOR_PROFI = 3;
-    private static int FACTOR_AVERAGE = 2;
-    private static int FACTOR_AMATEUR = 1;
-    private static String TAG = "TeamBuilder";
+    private static final int FACTOR_PROFI = 3;
+    private static final int FACTOR_AVERAGE = 2;
+    private static final int FACTOR_AMATEUR = 1;
+    private static final String TAG = "TeamBuilder";
 
     public ArrayList<ArrayList<Person>> createTeams(ArrayList<Person> persons)
     {
         // in version 1 we only have two teams. make an update later with custom team amount.
 
-        ArrayList<Person> team1 = new ArrayList<Person>();
-        ArrayList<Person> team2 = new ArrayList<Person>();
+        ArrayList<Person> team1 = new ArrayList<>();
+        ArrayList<Person> team2 = new ArrayList<>();
 
         // now check all persons in persons array. move them into the proper array
 
-        ArrayList<Person> profis = new ArrayList<Person>();
-        ArrayList<Person> averages = new ArrayList<Person>();
-        ArrayList<Person> amateurs = new ArrayList<Person>();
+        ArrayList<Person> profis = new ArrayList<>();
+        ArrayList<Person> averages = new ArrayList<>();
+        ArrayList<Person> amateurs = new ArrayList<>();
 
         for (Person person : persons)
         {
@@ -94,7 +94,7 @@ public class BusinessLogic {
                 Log.i("TeamBuilder","We have a person called " + person.getFirstName() + "in team2" + " with a " + person.getSkillLevel());
             }
 
-        ArrayList<ArrayList<Person>> teams = new ArrayList<ArrayList<Person>>();
+        ArrayList<ArrayList<Person>> teams = new ArrayList<>();
         teams.add(team1);
         teams.add(team2);
 
@@ -105,19 +105,23 @@ public class BusinessLogic {
     {
         int strength = 0;
         for (Person p : team)
-            if(p.getSkillLevel() == 2)
-                strength += FACTOR_PROFI;
-            else if (p.getSkillLevel() == 1)
-                strength += FACTOR_AVERAGE;
-            else if (p.getSkillLevel() == 0)
-                strength += FACTOR_AMATEUR;
+            switch (p.getSkillLevel()) {
+                case 2:
+                    strength += FACTOR_PROFI;
+                    break;
+                case 1:
+                    strength += FACTOR_AVERAGE;
+                    break;
+                case 0:
+                    strength += FACTOR_AMATEUR;
+                    break;
+            }
 
         return strength;
     }
 
     private Person getFirstAverageFromTeam(ArrayList<Person> team)
     {
-        Person person = new Person();
         for(Person p : team)
         {
             if (p.getSkillLevel() == 1) {
@@ -140,7 +144,7 @@ public class BusinessLogic {
         return null;
     }
 
-    private ArrayList<ArrayList<Person>> validateTeams(ArrayList<Person> team1, ArrayList<Person> team2)
+    private void validateTeams(ArrayList<Person> team1, ArrayList<Person> team2)
     {
 
         //every team needs to check for its strength.
@@ -187,11 +191,9 @@ public class BusinessLogic {
         Log.i("TeamBuilder","Now Team 1 Strength is " + getTeamStrength(team1));
         Log.i("TeamBuilder","Now Team 2 Strength is " + getTeamStrength(team2));
 
-        ArrayList<ArrayList<Person>> teams = new ArrayList<ArrayList<Person>>();
+        ArrayList<ArrayList<Person>> teams = new ArrayList<>();
         teams.add(team1);
         teams.add(team2);
-
-        return teams;
     }
     private boolean haveAllTeamsSameSize(ArrayList<ArrayList<Person>> teams)
     {
