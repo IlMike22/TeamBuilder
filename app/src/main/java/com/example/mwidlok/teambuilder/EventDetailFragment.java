@@ -113,6 +113,9 @@ public class EventDetailFragment extends Fragment {
                 Log.e(TAG, "Element tvNoEventMembersInfo is null.");
         }
 
+        // first remove all items that previously were added to dataset, then put in the updated array of members
+        if (!dataSet.isEmpty())
+            dataSet.clear();
 
         dataSet.addAll(allPersons);
 

@@ -156,12 +156,16 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
     @Override
     public void onNewPersonCreated(Person newPerson, int eventId) {
         EventDetailFragment eventDetailFragment = new EventDetailFragment();
+        CreatePersonFragment createPersonFrag = new CreatePersonFragment();
         Bundle args = new Bundle();
         args.putSerializable("newPerson", newPerson);
         args.putInt("eventId", eventId);
         int REQUESTCODE_MEMBER_CREATED = 100;
         args.putInt(getString(R.string.statuscode), REQUESTCODE_MEMBER_CREATED);
         eventDetailFragment.setArguments(args);
+
+        // for back button -> we dont want that user can via back button go back to create person view.
+        popFragmentFromStack(createPersonFrag);
 
         createTransactionAndReplaceFragment(eventDetailFragment,  getString(R.string.frg_tag_event_detail));
     }
@@ -170,11 +174,15 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
     public void onPersonEdited(int eventId) {
         // called after a person was edited an user saved changes.
         EventDetailFragment eventDetailFragment = new EventDetailFragment();
+        CreatePersonFragment createPersonFrag = new CreatePersonFragment();
         Bundle args = new Bundle();
         args.putInt("eventId", eventId);
         int REQUESTCODE_MEMBER_EDITED = 101;
         args.putInt(getString(R.string.statuscode), REQUESTCODE_MEMBER_EDITED);
         eventDetailFragment.setArguments(args);
+
+        // for back button -> we dont want that user can via back button go back to create person view.
+        popFragmentFromStack(createPersonFrag);
 
         createTransactionAndReplaceFragment(eventDetailFragment,  getString(R.string.frg_tag_event_detail));
 
@@ -184,11 +192,15 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
     public void onPersonDeleted(int eventId) {
         // called after person was successfully deleted in db.
         EventDetailFragment eventDetailFragment = new EventDetailFragment();
+        CreatePersonFragment createPersonFrag = new CreatePersonFragment();
         Bundle args = new Bundle();
         args.putInt("eventId", eventId);
         int REQUESTCODE_MEMBER_DELETED = 102;
         args.putInt(getString(R.string.statuscode), REQUESTCODE_MEMBER_DELETED);
         eventDetailFragment.setArguments(args);
+
+        // for back button -> we dont want that user can via back button go back to create person view.
+        popFragmentFromStack(createPersonFrag);
 
         createTransactionAndReplaceFragment(eventDetailFragment, getString(R.string.frg_tag_event_detail));
 
@@ -205,6 +217,15 @@ public class MainActivity extends AppCompatActivity implements CreateEventFragme
     private void createTransactionAndReplaceFragment(Fragment currentFragment, String fragmentTAG) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.llyt_container, currentFragment,fragmentTAG).addToBackStack(null).commit();
+    }
+
+    private void popFragmentFromStack(Fragment fragmentToPop)
+    {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.remove(fragmentToPop);
+        transaction.commit();
+        fm.popBackStack();
     }
 }
 

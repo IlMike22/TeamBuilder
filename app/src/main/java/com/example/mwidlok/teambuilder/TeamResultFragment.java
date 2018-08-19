@@ -103,9 +103,9 @@ public class TeamResultFragment extends Fragment {
 
         String result1Output;
         String result2Output;
-        String profiOutput = "Profis\n";
-        String averageOutput = "Averages:\n";
-        String amateurOutput = "Amateurs:\n";
+        String profiOutput = "";
+        String averageOutput = "";
+        String amateurOutput = "";
 
         ArrayList<Person> team1 = result.get(0);
         ArrayList<Person> team2 = result.get(1);
@@ -124,11 +124,11 @@ public class TeamResultFragment extends Fragment {
             }
         }
 
-        result1Output = "Team 1 has the following members\n\n" + profiOutput + "\n" + averageOutput + "\n" + amateurOutput + "\n";
+        result1Output = "Team 1 has the following members\n" + profiOutput + "\n" + averageOutput + "\n" + amateurOutput + "\n";
 
-        profiOutput = "Profis:\n";
-        averageOutput = "Averages:\n";
-        amateurOutput = "Amateurs:\n";
+        profiOutput = "";
+        averageOutput = "";
+        amateurOutput = "";
 
         for (Person p2 : team2) {
             switch (p2.getSkillLevel()) {
@@ -144,21 +144,7 @@ public class TeamResultFragment extends Fragment {
             }
         }
 
-        result2Output = "Team 2 has the following members\n\n" + profiOutput + "\n" + averageOutput + "\n" + amateurOutput + "\n";
-
-//                for (Person p : team2) {
-//                    switch (p.getSkillLevel()) {
-//                        case 0:
-//                            profiOutput += " - " + p.getFirstName() + " " + p.getLastName() + "\n";
-//                            break;
-//                        case 1:
-//                            averageOutput += " - " + p.getFirstName() + " " + p.getLastName() + "\n";
-//                            break;
-//                        case 2:
-//                            amateurOutput += " - " + p.getFirstName() + " " + p.getLastName() + "\n";
-//                            break;
-//
-//                }
+        result2Output = "Team 2 has the following members\n" + profiOutput + "\n" + averageOutput + "\n" + amateurOutput + "\n";
 
 
         if (tvResult1 != null)
